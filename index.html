@@ -38,7 +38,30 @@ main{max-width:1120px;margin:auto;padding:20px 16px 60px}.toolbar{display:flex;g
 <div class="status" id="formStatus"></div>
 <div class="foot"><button class="secondary" id="cancel">Cancel</button><button class="primary" id="save">Save Coin</button></div>
 </div></div>
-<div class="toast" id="toast"></div>
+<div class="modal" id="detailModal">
+  <div class="sheet">
+    <h2 id="detailTitle">Coin Details</h2>
+
+    <div class="photos">
+      <div class="photo">
+        <span class="placeholder">No front photo</span>
+        <img id="detailFront" hidden>
+      </div>
+
+      <div class="photo">
+        <span class="placeholder">No back photo</span>
+        <img id="detailBack" hidden>
+      </div>
+    </div>
+
+    <div id="detailInfo"></div>
+
+    <div class="foot">
+      <button class="secondary" id="detailClose">Close</button>
+      <button class="primary" id="detailEdit">Edit Coin</button>
+    </div>
+  </div>
+</div><div class="toast" id="toast"></div>
 
 <script type="module">
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
