@@ -72,7 +72,7 @@ function render(){
   const list=coins.filter(c=>(!f||c.category===f)&&JSON.stringify(c).toLowerCase().includes(q));
   $("count").textContent=`${list.length} coin${list.length===1?"":"s"} in your vault`;
   $("grid").innerHTML=list.length?list.map(c=>`
-  <article class="coin">
+  <article class="coin" data-open="${c.id}">
    <div class="coinimg">${c.front_photo_url?`<img src="${esc(publicUrl(c.front_photo_url))}" alt="Front of coin">`:'<span class="noimg">No front photo</span>'}</div>
    <div class="coinbody">
     <h3>${esc(c.name||c.agency_branch||"Untitled Coin")}</h3>
