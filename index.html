@@ -95,7 +95,7 @@ function render(){
   const list=coins.filter(c=>(!f||c.category===f)&&JSON.stringify(c).toLowerCase().includes(q));
   $("count").textContent=`${list.length} coin${list.length===1?"":"s"} in your vault`;
   $("grid").innerHTML=list.length?list.map(c=>`
-  <article class="coin">
+  <article class="coin" data-open="${c.id}">
    <div class="coinimg">${c.front_photo_url?`<img src="${esc(publicUrl(c.front_photo_url))}" alt="Front of coin">`:'<span class="noimg">No front photo</span>'}</div>
    <div class="coinbody">
     <h3>${esc(c.name||c.agency_branch||"Untitled Coin")}</h3>
@@ -106,8 +106,47 @@ function render(){
   </article>`).join(""):'<div class="empty">No coins yet.<br>Tap <b>＋ Add Coin</b> to start your collection.</div>';
   document.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>editCoin(b.dataset.edit));
   document.querySelectorAll("[data-delete]").forEach(b=>b.onclick=()=>deleteCoin(b.dataset.delete));
+}document.querySelectorAll("[data-open]").forEach(card=>{
+  card.onclick=()=>{
+    const coin=coins.find(c=>c.id===card.dataset.open);
+    if(coin) openDetail(coin);
+  };
+});
+function openDetail(c){
+  $("detailTitle").textContent=c.name||c.agency_branch||"Coin Details";
+
+  const front=$("detailFront");
+  const back=$("detailBack");
+
+  front.hidden=!c.front_photo_url;
+  back.hidden=!c.back_photo_url;
+
+  if(c.front_photo_url)front.src=publicUrl(c.front_photo_url);
+  if(c.back_photo_url)back.src=publicUrl(c.back_photo_url);
+
+  $("detailInfo").innerHTML=`
+    <div class="detail-list">
+      <div><b>Category</b><span>${esc(c.category||"—")}</span></div>
+      <div><b>Agency / Branch</b><span>${esc(c.agency_branch||"—")}</span></div>
+      <div><b>Title / Rank</b><span>${esc(c.title_rank||"—")}</span></div>
+      <div><b>Name</b><span>${esc(c.name||"—")}</span></div>
+      <div><b>Unit</b><span>${esc(c.unit||"—")}</span></div>
+      <div><b>Version</b><span>${esc(c.version||"—")}</span></div>
+      <div><b>Notes</b><span>${esc(c.notes||"—")}</span></div>
+    </div>
+  `;
+
+  $("detailModal").classList.add("open");
+
+  $("detailEdit").onclick=()=>{
+    $("detailModal").classList.remove("open");
+    editCoin(c.id);
+  };
 }
-function resetForm(){
+
+$("detailClose").onclick=()=>{
+  $("detailModal").classList.remove("open");
+};function resetForm(){
  ["category","agency_branch","title_rank","name","unit","version","notes"].forEach(x=>$(x).value="");
  $("front").value="";$("back").value="";$("frontPreview").hidden=true;$("backPreview").hidden=true;
  $("frontBox").querySelector(".placeholder").style.display="";$("backBox").querySelector(".placeholder").style.display="";
