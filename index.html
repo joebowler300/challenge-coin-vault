@@ -980,29 +980,26 @@ async function loadCoins(){
 function updateDashboard(){
   const total=coins.length;
 
-  const categories={
-    "Police Departments":0,
-    "Federal":0,
-    "Military":0,
-    "Fire / EMS":0,
-    "Other":0
-  };
+const categories={
+  "Police Departments":0,
+  "Federal":0,
+  "Military":0,
+  "Fire / EMS":0,
+  "Company":0,
+  "Sheriff's Department":0,
+  "Government":0,
+  "Other":0
+};
 
-  coins.forEach(c=>{
-    const category=c.category||"Other";
+coins.forEach(c=>{
+  const category=c.category||"Other";
 
-    if(category==="Police Departments"){
-      categories["Police Departments"]++;
-    }else if(category==="Federal"){
-      categories["Federal"]++;
-    }else if(category==="Military"){
-      categories["Military"]++;
-    }else if(category==="Fire / EMS"){
-      categories["Fire / EMS"]++;
-    }else{
-      categories["Other"]++;
-    }
-  });
+  if(categories.hasOwnProperty(category)){
+    categories[category]++;
+  }else{
+    categories["Other"]++;
+  }
+});
 
   $("totalCoins").textContent=total;
   $("policeCoins").textContent=categories["Police Departments"];
@@ -1015,20 +1012,26 @@ function updateDashboard(){
   $("chartTotal").textContent=`${total} ${total===1?"coin":"coins"}`;
 
   const colors=[
-    "#2777d6",
-    "#e1ad32",
-    "#4aa45f",
-    "#df4c45",
-    "#8b6bd6"
-  ];
+  "#2777d6",
+  "#e1ad32",
+  "#4aa45f",
+  "#df4c45",
+  "#8b6bd6",
+  "#2aa7a1",
+  "#d97932",
+  "#777777"
+];
 
   const labels=[
-    "Police Departments",
-    "Federal",
-    "Military",
-    "Fire / EMS",
-    "Other"
-  ];
+  "Police Departments",
+  "Federal",
+  "Military",
+  "Fire / EMS",
+  "Company",
+  "Sheriff's Department",
+  "Government",
+  "Other"
+];
 
   let start=0;
   const stops=[];
