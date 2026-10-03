@@ -235,13 +235,16 @@ color:var(--muted);
 /* RECENT */
 
 .recent{
-display:grid;
-grid-template-columns:repeat(4,1fr);
-gap:10px;
+display:flex;
+gap:12px;
+overflow-x:auto;
+padding-bottom:8px;
 }
 
 .recent-card{
-min-width:0;
+min-width:220px;
+width:220px;
+flex:0 0 220px;
 cursor:pointer;
 }
 
