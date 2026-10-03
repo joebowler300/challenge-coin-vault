@@ -40,7 +40,25 @@ main{max-width:1120px;margin:auto;padding:20px 16px 60px}.toolbar{display:flex;g
 </div></div>
 <div class="toast" id="toast"></div>
 
-<script type="module">
+<div class="modal" id="detailModal">
+<div class="sheet">
+<h2 id="detailTitle">Coin Details</h2>
+<div class="photos">
+<div class="photo"><span class="placeholder">Front photo</span><img id="detailFront" hidden></div>
+<div class="photo"><span class="placeholder">Back photo</span><img id="detailBack" hidden></div>
+</div>
+<div class="field"><label>Category</label><div id="detailCategory"></div></div>
+<div class="field"><label>Agency / Branch</label><div id="detailAgency"></div></div>
+<div class="field"><label>Title / Rank</label><div id="detailTitleRank"></div></div>
+<div class="field"><label>Name</label><div id="detailName"></div></div>
+<div class="field"><label>Unit</label><div id="detailUnit"></div></div>
+<div class="field"><label>Version</label><div id="detailVersion"></div></div>
+<div class="field"><label>Notes</label><div id="detailNotes"></div></div>
+<div class="foot">
+<button class="secondary" id="detailClose">Close</button>
+</div>
+</div>
+</div><script type="module">
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
 const SUPABASE_URL = "https://wwjetsaxqgzkxrfqmfac.supabase.co";
@@ -72,7 +90,7 @@ function render(){
   const list=coins.filter(c=>(!f||c.category===f)&&JSON.stringify(c).toLowerCase().includes(q));
   $("count").textContent=`${list.length} coin${list.length===1?"":"s"} in your vault`;
   $("grid").innerHTML=list.length?list.map(c=>`
-  <article class="coin">
+  <article class="coin" data-open="${c.id}">
    <div class="coinimg">${c.front_photo_url?`<img src="${esc(publicUrl(c.front_photo_url))}" alt="Front of coin">`:'<span class="noimg">No front photo</span>'}</div>
    <div class="coinbody">
     <h3>${esc(c.name||c.agency_branch||"Untitled Coin")}</h3>
@@ -81,8 +99,14 @@ function render(){
     <div class="actions"><button class="secondary" data-edit="${c.id}">Edit</button><button class="danger" data-delete="${c.id}">Delete</button></div>
    </div>
   </article>`).join(""):'<div class="empty">No coins yet.<br>Tap <b>＋ Add Coin</b> to start your collection.</div>';
-  document.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>editCoin(b.dataset.edit));
-  document.querySelectorAll("[data-delete]").forEach(b=>b.onclick=()=>deleteCoin(b.dataset.delete));
+  document.querySelectorAll("[data-edit]").forEach(b=>b.onclick=e=>{e.stopPropagation();editCoin(b.dataset.edit);});
+  document.querySelectorAll("[data-delete]").forEach(b=>b.onclick=e=>{e.stopPropagation();deleteCoin(b.dataset.delete);});
+  document.querySelectorAll(".coin").forEach(card=>{
+  card.onclick=()=>{
+    const coin=coins.find(c=>c.id===card.dataset.open);
+    if(coin)openDetail(coin);
+  };
+});
 }
 function resetForm(){
  ["category","agency_branch","title_rank","name","unit","version","notes"].forEach(x=>$(x).value="");
@@ -142,6 +166,44 @@ async function deleteCoin(id){
   const paths=[c.front_photo_url,c.back_photo_url].filter(Boolean);if(paths.length)await supabase.storage.from(BUCKET).remove(paths);
   toast("Coin deleted");await loadCoins();
 }
-loadCoins();
+function openDetail(c){
+  $("detailTitle").textContent=c.name||c.agency_branch||"Coin Details";
+  $("detailCategory").textContent=c.category||"";
+  $("detailAgency").textContent=c.agency_branch||"";
+  $("detailTitleRank").textContent=c.title_rank||"";
+  $("detailName").textContent=c.name||"";
+  $("detailUnit").textContent=c.unit||"";
+  $("detailVersion").textContent=c.version||"";
+  $("detailNotes").textContent=c.notes||"";
+
+  const front=$("detailFront");
+  const back=$("detailBack");
+
+  if(c.front_photo_url){
+    front.src=publicUrl(c.front_photo_url);
+    front.hidden=false;
+  }else{
+    front.hidden=true;
+  }
+
+  if(c.back_photo_url){
+    back.src=publicUrl(c.back_photo_url);
+    back.hidden=false;
+  }else{
+    back.hidden=true;
+  }
+
+  $("detailModal").classList.add("open");
+}
+
+$("detailClose").onclick=()=>{
+  $("detailModal").classList.remove("open");
+};
+
+$("detailModal").onclick=e=>{
+  if(e.target.id==="detailModal"){
+    $("detailModal").classList.remove("open");
+  }
+};loadCoins();
 </script>
 </body></html>
