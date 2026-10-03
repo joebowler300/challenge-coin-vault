@@ -1125,6 +1125,18 @@ function preview(input,img,box){const file=input.files[0];if(!file)return;const 
 $("front").onchange=()=>preview($("front"),$("frontPreview"),$("frontBox"));
 $("back").onchange=()=>preview($("back"),$("backPreview"),$("backBox"));
 $("addBtn").onclick=openAdd;$("cancel").onclick=closeModal;$("search").oninput=render;$("filter").onchange=render;
+  function showCategory(category){
+  $("filter").value=category;
+  render();
+  $("filter").value=category;
+}
+
+$("totalCoins").closest(".stat").onclick=()=>showCategory("");
+$("policeCoins").closest(".stat").onclick=()=>showCategory("Police Departments");
+$("federalCoins").closest(".stat").onclick=()=>showCategory("Federal");
+$("militaryCoins").closest(".stat").onclick=()=>showCategory("Military");
+$("fireCoins").closest(".stat").onclick=()=>showCategory("Fire / EMS");
+$("otherCoins").closest(".stat").onclick=()=>showCategory("Other");
 
 async function uploadPhoto(file, coinId, side){
   const ext=(file.name.split(".").pop()||"jpg").toLowerCase().replace(/[^a-z0-9]/g,"")||"jpg";
