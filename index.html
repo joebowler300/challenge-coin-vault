@@ -180,18 +180,22 @@ function openDetail(c){
   const back=$("detailBack");
 
   if(c.front_photo_url){
-    front.src=publicUrl(c.front_photo_url);
-    front.hidden=false;
-  }else{
-    front.hidden=true;
-  }
+  front.src=publicUrl(c.front_photo_url);
+  front.hidden=false;
+  front.previousElementSibling.style.display="none";
+}else{
+  front.hidden=true;
+  front.previousElementSibling.style.display="";
+}
 
   if(c.back_photo_url){
-    back.src=publicUrl(c.back_photo_url);
-    back.hidden=false;
-  }else{
-    back.hidden=true;
-  }
+  back.src=publicUrl(c.back_photo_url);
+  back.hidden=false;
+  back.previousElementSibling.style.display="none";
+}else{
+  back.hidden=true;
+  back.previousElementSibling.style.display="";
+}
 
   $("detailModal").classList.add("open");
 }
