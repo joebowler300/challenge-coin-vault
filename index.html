@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b1220">
+<title>Challenge Coin Vault</title>
+<style>
+:root{--bg:#f4f6f8;--card:#fff;--ink:#111827;--muted:#667085;--line:#e4e7ec;--navy:#0b1220;--blue:#163a63;--gold:#d9a441;--danger:#b42318;--shadow:0 8px 24px #10182814}
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink)}
+header{background:var(--navy);color:#fff;padding:15px max(16px,calc((100vw - 1120px)/2));position:sticky;top:0;z-index:10;box-shadow:0 2px 12px #0003}.top{display:flex;align-items:center;justify-content:space-between;gap:12px}.brand{display:flex;align-items:center;gap:10px}.logo{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,var(--gold),#fff0b0);display:grid;place-items:center;color:var(--navy);font-weight:900}.brand h1{font-size:18px;margin:0}.brand small{color:#b9c3d4}.cloud{font-size:12px;color:#c8d2e3}
+main{max-width:1120px;margin:auto;padding:20px 16px 60px}.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}.search{flex:1;min-width:210px}input,select,textarea{width:100%;font:inherit;border:1px solid var(--line);border-radius:10px;padding:12px;background:#fff;color:var(--ink)}textarea{min-height:90px;resize:vertical}button{border:0;border-radius:10px;padding:12px 16px;font:inherit;font-weight:700;cursor:pointer}.primary{background:var(--blue);color:#fff}.secondary{background:#eef2f6;color:#182230}.danger{background:#fee4e2;color:var(--danger)}.count{color:var(--muted);font-size:14px;margin:8px 0 16px}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:16px}.coin{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:var(--shadow)}.coinimg{aspect-ratio:1.3;background:#eef1f5;display:grid;place-items:center;overflow:hidden}.coinimg img{width:100%;height:100%;object-fit:cover}.noimg{color:#98a2b3;font-weight:700}.coinbody{padding:14px}.coinbody h3{margin:0 0 4px;font-size:17px}.meta{color:var(--muted);font-size:13px;line-height:1.5}.tags{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}.tag{font-size:11px;background:#eef4fb;color:#23476f;border-radius:999px;padding:5px 8px}.actions{display:flex;gap:8px;margin-top:12px}.actions button{flex:1;padding:9px}.empty{text-align:center;padding:60px 20px;color:var(--muted)}.modal{position:fixed;inset:0;background:#0008;display:none;align-items:flex-end;justify-content:center;z-index:20}.modal.open{display:flex}.sheet{background:#fff;width:min(780px,100%);max-height:94vh;overflow:auto;border-radius:20px 20px 0 0;padding:20px}.sheet h2{margin:0 0 16px}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{margin-bottom:12px}.field label{display:block;font-size:13px;font-weight:700;margin:0 0 6px}.photos{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}.photo{border:2px dashed #cbd5e1;border-radius:12px;overflow:hidden;background:#f8fafc;aspect-ratio:1.15;position:relative;display:grid;place-items:center}.photo img{width:100%;height:100%;object-fit:cover}.photo .placeholder{color:#98a2b3;font-weight:700}.photo label{position:absolute;left:8px;right:8px;bottom:8px;background:#0b1220dd;color:#fff;text-align:center;padding:9px;border-radius:9px}.photo input{display:none}.foot{display:flex;gap:10px;justify-content:flex-end;margin-top:10px}.status{font-size:13px;color:var(--muted);min-height:20px}.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:#0b1220;color:#fff;padding:12px 16px;border-radius:12px;display:none;z-index:30;box-shadow:var(--shadow)}.toast.show{display:block}.spinner{display:inline-block;width:14px;height:14px;border:2px solid #ffffff55;border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;vertical-align:-2px;margin-right:6px}@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:600px){.formgrid,.photos{grid-template-columns:1fr}.cloud{display:none}}
+</style>
+</head>
+<body>
+<header><div class="top"><div class="brand"><div class="logo">CC</div><div><h1>Challenge Coin Vault</h1><small>Cloud collection</small></div></div><div class="cloud" id="cloudStatus">Connecting…</div></div></header>
+<main>
+<div class="toolbar"><input id="search" class="search" placeholder="Search your coins…"><select id="filter"><option value="">All categories</option></select><button class="primary" id="addBtn">＋ Add Coin</button></div>
+<div class="count" id="count">Loading…</div><section id="grid" class="grid"></section>
+</main>
+
+<div class="modal" id="modal"><div class="sheet">
+<h2 id="modalTitle">Add Coin</h2>
+<div class="photos">
+<div class="photo" id="frontBox"><span class="placeholder">Front photo</span><img id="frontPreview" hidden><label>📷 Choose Front<input id="front" type="file" accept="image/*" capture="environment"></label></div>
+<div class="photo" id="backBox"><span class="placeholder">Back photo</span><img id="backPreview" hidden><label>📷 Choose Back<input id="back" type="file" accept="image/*" capture="environment"></label></div>
+</div>
+<div class="formgrid">
+<div class="field"><label>Category</label><input id="category" placeholder="Military, Law Enforcement…"></div>
+<div class="field"><label>Agency / Branch</label><input id="agency_branch" placeholder="Agency or branch"></div>
+<div class="field"><label>Title / Rank</label><input id="title_rank" placeholder="Chief, Colonel, Director…"></div>
+<div class="field"><label>Name</label><input id="name" placeholder="Person or organization"></div>
+<div class="field"><label>Unit</label><input id="unit" placeholder="Unit, division, office…"></div>
+<div class="field"><label>Version</label><input id="version" placeholder="Version or edition"></div>
+</div>
+<div class="field"><label>Notes</label><textarea id="notes" placeholder="Additional information about this coin…"></textarea></div>
+<div class="status" id="formStatus"></div>
+<div class="foot"><button class="secondary" id="cancel">Cancel</button><button class="primary" id="save">Save Coin</button></div>
+</div></div>
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+
+const SUPABASE_URL = "https://wwjetsaxqgzkxrfqmfac.supabase.co";
+const SUPABASE_KEY = "sb_publishable_NXCtWSgcQc1_PIgsL01hRQ_0GsmTlP6";
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+const BUCKET = "coin-photos";
+let coins=[], editing=null;
+
+const $=id=>document.getElementById(id);
+const esc=s=>(s??"").toString().replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+function toast(msg){$("toast").textContent=msg;$("toast").classList.add("show");setTimeout(()=>$("toast").classList.remove("show"),2500)}
+function setStatus(msg=""){ $("formStatus").textContent=msg }
+
+async function loadCoins(){
+  $("cloudStatus").textContent="☁️ Loading…";
+  const {data,error}=await supabase.from("coins").select("*").order("created_at",{ascending:false});
+  if(error){$("cloudStatus").textContent="☁️ Connection error";$("grid").innerHTML=`<div class="empty">Could not load your cloud collection.<br><small>${esc(error.message)}</small></div>`;return}
+  coins=data||[];$("cloudStatus").textContent="☁️ Cloud connected";render();
+}
+function publicUrl(path){
+  if(!path)return "";
+  if(path.startsWith("http"))return path;
+  return supabase.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
+}
+function render(){
+  const q=$("search").value.toLowerCase(), f=$("filter").value;
+  const cats=[...new Set(coins.map(c=>c.category).filter(Boolean))].sort();
+  $("filter").innerHTML='<option value="">All categories</option>'+cats.map(c=>`<option value="${esc(c)}" ${c===f?"selected":""}>${esc(c)}</option>`).join("");
+  const list=coins.filter(c=>(!f||c.category===f)&&JSON.stringify(c).toLowerCase().includes(q));
+  $("count").textContent=`${list.length} coin${list.length===1?"":"s"} in your vault`;
+  $("grid").innerHTML=list.length?list.map(c=>`
+  <article class="coin">
+   <div class="coinimg">${c.front_photo_url?`<img src="${esc(publicUrl(c.front_photo_url))}" alt="Front of coin">`:'<span class="noimg">No front photo</span>'}</div>
+   <div class="coinbody">
+    <h3>${esc(c.name||c.agency_branch||"Untitled Coin")}</h3>
+    <div class="meta">${esc(c.agency_branch||"")}${c.title_rank?" • "+esc(c.title_rank):""}${c.unit?"<br>"+esc(c.unit):""}</div>
+    <div class="tags">${c.category?`<span class="tag">${esc(c.category)}</span>`:""}${c.version?`<span class="tag">${esc(c.version)}</span>`:""}</div>
+    <div class="actions"><button class="secondary" data-edit="${c.id}">Edit</button><button class="danger" data-delete="${c.id}">Delete</button></div>
+   </div>
+  </article>`).join(""):'<div class="empty">No coins yet.<br>Tap <b>＋ Add Coin</b> to start your collection.</div>';
+  document.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>editCoin(b.dataset.edit));
+  document.querySelectorAll("[data-delete]").forEach(b=>b.onclick=()=>deleteCoin(b.dataset.delete));
+}
+function resetForm(){
+ ["category","agency_branch","title_rank","name","unit","version","notes"].forEach(x=>$(x).value="");
+ $("front").value="";$("back").value="";$("frontPreview").hidden=true;$("backPreview").hidden=true;
+ $("frontBox").querySelector(".placeholder").style.display="";$("backBox").querySelector(".placeholder").style.display="";
+ editing=null;$("modalTitle").textContent="Add Coin";setStatus("");
+}
+function openAdd(){resetForm();$("modal").classList.add("open")}
+function closeModal(){$("modal").classList.remove("open")}
+function preview(input,img,box){const file=input.files[0];if(!file)return;const r=new FileReader();r.onload=()=>{img.src=r.result;img.hidden=false;box.querySelector(".placeholder").style.display="none"};r.readAsDataURL(file)}
+$("front").onchange=()=>preview($("front"),$("frontPreview"),$("frontBox"));
+$("back").onchange=()=>preview($("back"),$("backPreview"),$("backBox"));
+$("addBtn").onclick=openAdd;$("cancel").onclick=closeModal;$("search").oninput=render;$("filter").onchange=render;
+
+async function uploadPhoto(file, coinId, side){
+  const ext=(file.name.split(".").pop()||"jpg").toLowerCase().replace(/[^a-z0-9]/g,"")||"jpg";
+  const path=`${coinId}/${side}-${Date.now()}.${ext}`;
+  const {error}=await supabase.storage.from(BUCKET).upload(path,file,{upsert:false,contentType:file.type||"image/jpeg"});
+  if(error)throw error;
+  return path;
+}
+async function removePhoto(path){if(path)await supabase.storage.from(BUCKET).remove([path])}
+
+$("save").onclick=async()=>{
+  const btn=$("save");btn.disabled=true;btn.innerHTML='<span class="spinner"></span>Saving…';
+  try{
+    const existing=editing?coins.find(c=>c.id===editing):null;
+    const id=editing||crypto.randomUUID();
+    const payload={
+      id,category:$("category").value.trim(),agency_branch:$("agency_branch").value.trim(),
+      title_rank:$("title_rank").value.trim(),name:$("name").value.trim(),unit:$("unit").value.trim(),
+      version:$("version").value.trim(),notes:$("notes").value.trim(),updated_at:new Date().toISOString()
+    };
+    if(!editing)payload.created_at=new Date().toISOString();
+    const frontFile=$("front").files[0],backFile=$("back").files[0];
+    if(frontFile){setStatus("Uploading front photo…");payload.front_photo_url=await uploadPhoto(frontFile,id,"front");}
+    if(backFile){setStatus("Uploading back photo…");payload.back_photo_url=await uploadPhoto(backFile,id,"back");}
+    const {error}=await supabase.from("coins").upsert(payload,{onConflict:"id"});
+    if(error)throw error;
+    toast(editing?"Coin updated":"Coin saved to the cloud");
+    closeModal();await loadCoins();
+  }catch(e){setStatus("Could not save: "+e.message);toast("Could not save coin")}
+  finally{btn.disabled=false;btn.textContent="Save Coin"}
+};
+
+async function editCoin(id){
+  const c=coins.find(x=>x.id===id);if(!c)return;editing=id;$("modalTitle").textContent="Edit Coin";
+  ["category","agency_branch","title_rank","name","unit","version","notes"].forEach(x=>$(x).value=c[x]||"");
+  if(c.front_photo_url){$("frontPreview").src=publicUrl(c.front_photo_url);$("frontPreview").hidden=false;$("frontBox").querySelector(".placeholder").style.display="none"}
+  if(c.back_photo_url){$("backPreview").src=publicUrl(c.back_photo_url);$("backPreview").hidden=false;$("backBox").querySelector(".placeholder").style.display="none"}
+  $("modal").classList.add("open");
+}
+async function deleteCoin(id){
+  const c=coins.find(x=>x.id===id);if(!c||!confirm("Delete this coin and its photos?"))return;
+  const {error}=await supabase.from("coins").delete().eq("id",id);
+  if(error){toast("Could not delete coin");return}
+  const paths=[c.front_photo_url,c.back_photo_url].filter(Boolean);if(paths.length)await supabase.storage.from(BUCKET).remove(paths);
+  toast("Coin deleted");await loadCoins();
+}
+loadCoins();
+</script>
+</body></html>
