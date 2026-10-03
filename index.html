@@ -104,9 +104,17 @@ function render(){
     <div class="actions"><button class="secondary" data-edit="${c.id}">Edit</button><button class="danger" data-delete="${c.id}">Delete</button></div>
    </div>
   </article>`).join(""):'<div class="empty">No coins yet.<br>Tap <b>＋ Add Coin</b> to start your collection.</div>';
-  document.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>editCoin(b.dataset.edit));
-  document.querySelectorAll("[data-delete]").forEach(b=>b.onclick=()=>deleteCoin(b.dataset.delete));
-}document.querySelectorAll("[data-open]").forEach(card=>{
+  document.querySelectorAll("[data-edit]").forEach(b=>b.onclick=e=>{
+  e.stopPropagation();
+  editCoin(b.dataset.edit);
+});
+
+document.querySelectorAll("[data-delete]").forEach(b=>b.onclick=e=>{
+  e.stopPropagation();
+  deleteCoin(b.dataset.delete);
+});
+
+document.querySelectorAll(".coin").forEach(card=>{
   card.onclick=()=>{
     const coin=coins.find(c=>c.id===card.dataset.open);
     if(coin) openDetail(coin);
