@@ -1125,7 +1125,7 @@ function publicUrl(path){
 function render(){
   updateDashboard();
   const q=$("search").value.toLowerCase(), f=$("filter").value;
-  const cats=[...new Set(coins.map(c=>c.category).filter(Boolean))].sort();
+  const cats=["Police Departments","Federal","Military","Fire / EMS","Company","Sheriff's Department","Government","Other"];
   $("filter").innerHTML='<option value="">All categories</option>'+cats.map(c=>`<option value="${esc(c)}" ${c===f?"selected":""}>${esc(c)}</option>`).join("");
   $("filter").value=f;
   const list=coins.filter(c=>(!f||c.category===f)&&JSON.stringify(c).toLowerCase().includes(q));
