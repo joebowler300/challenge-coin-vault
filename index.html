@@ -1017,7 +1017,8 @@ const categories={
   "Company":0,
   "Sheriff's Department":0,
   "Government":0,
-  "Other":0
+"Sports":0,
+"Other":0
 };
 
 coins.forEach(c=>{
@@ -1039,7 +1040,7 @@ coins.forEach(c=>{
   $("companyCoins").textContent=categories["Company"];
 $("sheriffCoins").textContent=categories["Sheriff's Department"];
 $("governmentCoins").textContent=categories["Government"];
-
+$("sportsCoins").textContent=categories["Sports"];
   $("donutNumber").textContent=total;
   $("chartTotal").textContent=`${total} ${total===1?"coin":"coins"}`;
 
@@ -1051,7 +1052,8 @@ $("governmentCoins").textContent=categories["Government"];
   "#8b6bd6",
   "#2aa7a1",
   "#d97932",
-  "#777777"
+"#5b8def",
+"#777777"
 ];
 
   const labels=[
@@ -1062,7 +1064,8 @@ $("governmentCoins").textContent=categories["Government"];
   "Company",
   "Sheriff's Department",
   "Government",
-  "Other"
+"Sports",
+"Other"
 ];
 
   let start=0;
