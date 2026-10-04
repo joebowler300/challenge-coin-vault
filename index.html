@@ -1082,34 +1082,7 @@ $("governmentCoins").textContent=categories["Government"];
     </div>
   `).join("");
 
-  const recent=[...coins]
-    .sort((a,b)=>new Date(b.created_at||0)-new Date(a.created_at||0))
-    .slice(0,4);
 
-  $("recent").innerHTML=recent.length
-    ? recent.map(c=>`
-      <div class="recent-card" data-recent="${c.id}">
-        <div class="recent-img">
-          ${
-            c.front_photo_url
-            ? `<img src="${esc(publicUrl(c.front_photo_url))}" alt="">`
-            : `<span class="noimg">🪙</span>`
-          }
-        </div>
-        <div class="recent-name">${esc(c.name||c.agency_branch||"Untitled Coin")}</div>
-        <div class="recent-date">
-          ${c.created_at ? new Date(c.created_at).toLocaleDateString() : ""}
-        </div>
-      </div>
-    `).join("")
-    : `<div class="empty">No coins added yet.</div>`;
-
-  document.querySelectorAll("[data-recent]").forEach(card=>{
-    card.onclick=()=>{
-      const coin=coins.find(c=>c.id===card.dataset.recent);
-      if(coin)openDetail(coin);
-    };
-  });
 }
 
 function publicUrl(path){
