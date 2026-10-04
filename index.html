@@ -1104,7 +1104,7 @@ function publicUrl(path){
 function render(){
   updateDashboard();
   const q=$("search").value.toLowerCase(), f=$("filter").value;
-  const cats=["Police Departments","Federal","Military","Fire / EMS","Company","Sheriff's Department","Government","Other"];
+  const cats=["Police Departments","Federal","Military","Fire / EMS","Company","Sheriff's Department","Government","Sports","Other"];
   $("filter").innerHTML='<option value="">All categories</option>'+cats.map(c=>`<option value="${esc(c)}" ${c===f?"selected":""}>${esc(c)}</option>`).join("");
   $("filter").value=f;
   const list=coins.filter(c=>!f||(c.category||"Other")===f);
