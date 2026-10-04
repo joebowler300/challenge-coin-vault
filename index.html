@@ -1107,7 +1107,7 @@ function render(){
   const cats=["Police Departments","Federal","Military","Fire / EMS","Company","Sheriff's Department","Government","Other"];
   $("filter").innerHTML='<option value="">All categories</option>'+cats.map(c=>`<option value="${esc(c)}" ${c===f?"selected":""}>${esc(c)}</option>`).join("");
   $("filter").value=f;
-  const list=coins.filter(c=>!f||c.category===f);
+  const list=coins.filter(c=>!f||(c.category||"Other")===f);
   $("count").textContent=`${list.length} coin${list.length===1?"":"s"} in your vault`;
   $("grid").innerHTML=list.length?list.map(c=>`
   <article class="coin" data-open="${c.id}">
