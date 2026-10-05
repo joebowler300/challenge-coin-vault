@@ -1114,7 +1114,7 @@ function render(){
    <div class="coinimg">${c.front_photo_url?`<img src="${esc(publicUrl(c.front_photo_url))}" alt="Front of coin">`:'<span class="noimg">No front photo</span>'}</div>
    <div class="coinbody">
     <h3>${esc(c.name||c.agency_branch||"Untitled Coin")}</h3>
-    <div class="meta">${esc(c.agency_branch||"")}${c.title_rank?" • "+esc(c.title_rank):""}${c.unit?"<br>"+esc(c.unit):""}</div>
+    <div class="meta"><strong>${esc(c.agency_branch||"")}</strong>${c.title_rank?" • "+esc(c.title_rank):""}${c.unit?"<br>"+esc(c.unit):""}</div>
     <div class="tags">${c.category?`<span class="tag">${esc(c.category)}</span>`:""}${c.version?`<span class="tag">${esc(c.version)}</span>`:""}</div>
     <div class="actions"><button class="secondary" data-edit="${c.id}">Edit</button><button class="danger" data-delete="${c.id}">Delete</button></div>
    </div>
