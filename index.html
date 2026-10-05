@@ -1158,7 +1158,15 @@ function render(){
   $("filter").value=f;
   const list=coins.filter(c=>{const text=[c.name,c.agency_branch,c.title_rank,c.unit,c.category,c.version].join(" ").toLowerCase();return (!f|| (c.category||"Other")===f)&&(!q||text.includes(q));});
   $("count").textContent=`${list.length} coin${list.length===1?"":"s"} in your vault`;
-  $("grid").innerHTML=list.length?list.map(c=>`
+ const s=$("sort").value;
+
+if(s==="az"){
+  list.sort((a,b)=>(a.name||a.agency_branch||"").localeCompare(b.name||b.agency_branch||""));
+}
+
+if(s==="za"){
+  list.sort((a,b)=>(b.name||b.agency_branch||"").localeCompare(a.name||a.agency_branch||""));
+} $("grid").innerHTML=list.length?list.map(c=>`
   <article class="coin" data-open="${c.id}">
    <div class="coinimg">${c.front_photo_url?`<img src="${esc(publicUrl(c.front_photo_url))}" alt="Front of coin">`:'<span class="noimg">No front photo</span>'}</div>
    <div class="coinbody">
@@ -1204,7 +1212,7 @@ function closeModal(){$("modal").classList.remove("open")}
 function preview(input,img,box){const file=input.files[0];if(!file)return;const r=new FileReader();r.onload=()=>{img.src=r.result;img.hidden=false;box.querySelector(".placeholder").style.display="none"};r.readAsDataURL(file)}
 $("front").onchange=()=>preview($("front"),$("frontPreview"),$("frontBox"));
 $("back").onchange=()=>preview($("back"),$("backPreview"),$("backBox"));
-$("addBtn").onclick=openAdd;$("cancel").onclick=closeModal;$("search").oninput=render;$("filter").onchange=render;
+$("addBtn").onclick=openAdd;$("cancel").onclick=closeModal;$("search").oninput=render;$("filter").onchange=render;$("sort").onchange=render;
   
 
 
