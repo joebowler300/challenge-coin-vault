@@ -1172,7 +1172,7 @@ if(s==="za"){
   list.sort((a,b)=>(b.name||b.agency_branch||"").localeCompare(a.name||a.agency_branch||""));
 } $("grid").innerHTML=list.length?list.map(c=>`
   <article class="coin" data-open="${c.id}">
-   <div class="coinimg">${c.front_photo_url?`<img src="${esc(thumbnailUrl(c.front_photo_url))}" alt="Front of coin">`:'<span class="noimg">No front photo</span>'}</div>
+   <div class="coinimg">${c.front_photo_url?`<img src="${esc(publicUrl(c.front_photo_url))}" alt="Front of coin">`:'<span class="noimg">No front photo</span>'}</div>
    <div class="coinbody">
     <h3>${esc(c.name||c.agency_branch||"Untitled Coin")}</h3>
     <div class="meta">${esc(c.agency_branch||"")}${c.title_rank?" • "+esc(c.title_rank):""}${c.unit?"<br>"+esc(c.unit):""}</div>
