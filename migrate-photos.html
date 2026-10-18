@@ -1,0 +1,111 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Challenge Coin Photo Migration</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+body{font-family:system-ui,sans-serif;max-width:760px;margin:24px auto;padding:16px;background:#f4f6f8;color:#172033}
+h2{margin-bottom:6px}p{line-height:1.5}
+button{padding:13px 18px;border:0;border-radius:9px;background:#163a63;color:white;font-size:16px;margin:8px 0}
+#log{white-space:pre-wrap;overflow-wrap:anywhere;background:white;padding:14px;border-radius:9px;min-height:120px}
+.warning{background:#fff4d6;padding:12px;border-radius:8px}
+</style>
+</head>
+<body>
+<h2>Challenge Coin Vault — Photo Migration</h2>
+<p>This copies photos from Supabase to Cloudflare R2 and updates the matching photo references. Original Supabase photos are never deleted.</p>
+<p class="warning">Keep this page private. Enter your R2 upload token only when prompted. Do not share it or put it in the code.</p>
+<button id="start">Start photo migration</button>
+<div id="status">Ready.</div>
+<pre id="log"></pre>
+<script>
+const SUPABASE_URL="https://wwjetsaxqgzkxrfqmfac.supabase.co";
+const SUPABASE_KEY="sb_publishable_NXCwTSgcQc1_PIgsL01hRQ_0GsmTlP6";
+const BUCKET="coin-photos";
+const WORKER="https://challenge-coin-vault-api.joeyg300.workers.dev";
+const db=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const logEl=document.getElementById("log");
+const statusEl=document.getElementById("status");
+const startBtn=document.getElementById("start");
+function log(s){logEl.textContent+=s+"\n";}
+function sourcePath(value){
+ if(!value)return null;
+ if(value.startsWith(WORKER+"/"))return {already:true,url:value};
+ if(value.startsWith("http")){
+  const marker="/object/public/"+BUCKET+"/";
+  const i=value.indexOf(marker);
+  if(i<0)return {error:"Unrecognized photo URL: "+value};
+  return {path:decodeURIComponent(value.slice(i+marker.length))};
+ }
+ return {path:value};
+}
+function workerUrl(path){
+ return WORKER+"/"+path.split("/").map(encodeURIComponent).join("/");
+}
+async function migratePhoto(row,field){
+ const original=row[field];
+ if(!original)return "empty";
+ const parsed=sourcePath(original);
+ if(parsed.already)return "already in R2";
+ if(parsed.error)throw new Error(parsed.error);
+ const path=parsed.path;
+ const sourceUrl=db.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
+ const response=await fetch(sourceUrl,{cache:"no-store"});
+ if(!response.ok)throw new Error("Supabase photo download failed: HTTP "+response.status);
+ const blob=await response.blob();
+ if(!blob.size)throw new Error("Downloaded photo is empty");
+ const token=window.__r2Token;
+ const upload=await fetch(workerUrl(path),{
+  method:"PUT",
+  headers:{"Authorization":"Bearer "+token,"Content-Type":blob.type||"image/jpeg"},
+  body:blob
+ });
+ if(!upload.ok)throw new Error("R2 upload failed: HTTP "+upload.status+" "+(await upload.text()).slice(0,200));
+ const newUrl=workerUrl(path);
+ const {error}=await db.from("coins").update({[field]:newUrl}).eq("id",row.id);
+ if(error)throw new Error("Uploaded to R2, but database update failed: "+error.message);
+ return "migrated";
+}
+document.getElementById("start").addEventListener("click",async()=>{
+ const token=prompt("Enter your Cloudflare Worker UPLOAD_TOKEN. It will not be saved.");
+ if(!token)return;
+ window.__r2Token=token;
+ startBtn.disabled=true;
+ logEl.textContent="";
+ let moved=0,failed=0,skipped=0;
+ try{
+  statusEl.textContent="Loading coin records…";
+  const {data:coins,error}=await db.from("coins").select("*");
+  if(error)throw new Error("Could not read coins: "+error.message);
+  log("Found "+coins.length+" coin records.");
+  for(let i=0;i<coins.length;i++){
+   const coin=coins[i];
+   for(const field of ["front_photo_url","back_photo_url"]){
+    if(!coin[field]){skipped++;continue;}
+    statusEl.textContent="Coin "+(i+1)+" of "+coins.length+" — "+field+"; transferred "+moved+", failed "+failed;
+    try{
+     const result=await migratePhoto(coin,field);
+     if(result==="migrated"){moved++;log("OK: coin "+coin.id+" "+field);}
+     else{skipped++;log("SKIP: coin "+coin.id+" "+field+" ("+result+")");}
+    }catch(e){
+     failed++;
+     log("FAILED: coin "+coin.id+" "+field+" — "+e.message);
+    }
+   }
+  }
+  statusEl.textContent="Finished. Transferred: "+moved+"; failed: "+failed+"; skipped/empty: "+skipped+".";
+  log("Migration finished. Keep the originals until you verify the app.");
+ }catch(e){
+  statusEl.textContent="Stopped: "+e.message;
+  log("ERROR: "+e.message);
+ }finally{
+  delete window.__r2Token;
+  startBtn.disabled=false;
+ }
+});
+</script>
+</body>
+</html>
