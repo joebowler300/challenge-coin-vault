@@ -1033,24 +1033,27 @@ justify-content:flex-start;
 </div>
 
 <script type="module">
-import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
-
-const SUPABASE_URL = "https://wwjetsaxqgzkxrfqmfac.supabase.co";
-const SUPABASE_KEY = "sb_publishable_NXCtWSgcQc1_PIgsL01hRQ_0GsmTlP6";
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
-const BUCKET = "coin-photos";
-let coins=[], editing=null;
+const API = "https://challenge-coin-vault-api.joeyg300.workers.dev";
+let coins = [], editing = null;
 
 const $=id=>document.getElementById(id);
 const esc=s=>(s??"").toString().replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
 function toast(msg){$("toast").textContent=msg;$("toast").classList.add("show");setTimeout(()=>$("toast").classList.remove("show"),2500)}
 function setStatus(msg=""){ $("formStatus").textContent=msg }
 
-async function loadCoins(){
-  $("cloudStatus").textContent="☁️ Loading…";
-  const {data,error}=await supabase.from("coins").select("*").order("created_at",{ascending:false});
-  if(error){$("cloudStatus").textContent="☁️ Connection error";$("grid").innerHTML=`<div class="empty">Could not load your cloud collection.<br><small>${esc(error.message)}</small></div>`;return}
-  coins=data||[];$("cloudStatus").textContent="☁️ Cloud connected";render();
+async function loadCoins() {
+  $("cloudStatus").textContent = "☁️ Loading...";
+  try {
+    const response = await fetch(`${API}/coins`);
+    if (!response.ok) throw new Error(await response.text());
+    const result = await response.json();
+    coins = Array.isArray(result) ? result : result.coins || [];
+    $("cloudStatus").textContent = `☁️ Cloud connected — ${coins.length} coins`;
+    render();
+  } catch (error) {
+    $("cloudStatus").textContent = "☁️ Connection error: " + error.message;
+    console.error(error);
+  }
 }
 
 
@@ -1221,14 +1224,30 @@ $("addBtn").onclick=openAdd;$("cancel").onclick=closeModal;$("search").oninput=r
 
 
 
-async function uploadPhoto(file, coinId, side){
-  const ext=(file.name.split(".").pop()||"jpg").toLowerCase().replace(/[^a-z0-9]/g,"")||"jpg";
-  const path=`${coinId}/${side}-${Date.now()}.${ext}`;
-  const {error}=await supabase.storage.from(BUCKET).upload(path,file,{upsert:false,contentType:file.type||"image/jpeg"});
-  if(error)throw error;
-  return path;
+
+const API = "https://challenge-coin-vault-api.joeyg300.workers.dev";
+
+async function uploadPhoto(file, coinId, side) {
+  const ext = (file.name.split(".").pop() || "jpg")
+    .toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg";
+  const path = `${coinId}/${side}-${Date.now()}.${ext}`;
+
+  const response = await fetch(`${API}/${path}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": file.type || "image/jpeg",
+      "Authorization": `Bearer ${UPLOAD_TOKEN}`
+    },
+    body: file
+  });
+
+  if (!response.ok) throw new Error(await response.text());
+  return `${API}/${path}`;
 }
-async function removePhoto(path){if(path)await supabase.storage.from(BUCKET).remove([path])}
+
+async function removePhoto(path) {
+  // Existing R2 photos are left in place for safety.
+}
 
 $("save").onclick=async()=>{
   const btn=$("save");btn.disabled=true;btn.innerHTML='<span class="spinner"></span>Saving…';
@@ -1244,8 +1263,12 @@ $("save").onclick=async()=>{
     const frontFile=$("front").files[0],backFile=$("back").files[0];
     if(frontFile){setStatus("Uploading front photo…");payload.front_photo_url=await uploadPhoto(frontFile,id,"front");}
     if(backFile){setStatus("Uploading back photo…");payload.back_photo_url=await uploadPhoto(backFile,id,"back");}
-    const {error}=await supabase.from("coins").upsert(payload,{onConflict:"id"});
-    if(error)throw error;
+    const response = await fetch(`${API}/api/coins`, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(payload)
+});
+if (!response.ok) throw new Error(await response.text());
     toast(editing?"Coin updated":"Coin saved to the cloud");
     closeModal();await loadCoins();
   }catch(e){setStatus("Could not save: "+e.message);toast("Could not save coin")}
@@ -1261,8 +1284,11 @@ async function editCoin(id){
 }
 async function deleteCoin(id){
   const c=coins.find(x=>x.id===id);if(!c||!confirm("Delete this coin and its photos?"))return;
-  const {error}=await supabase.from("coins").delete().eq("id",id);
-  if(error){toast("Could not delete coin");return}
+  const response = await fetch(`${API}/api/coins/${id}`, {
+  method: "DELETE"
+});
+if (!response.ok) throw new Error(await response.text());
+ 
   const paths=[c.front_photo_url,c.back_photo_url].filter(Boolean);if(paths.length)await supabase.storage.from(BUCKET).remove(paths);
   toast("Coin deleted");await loadCoins();
 }
