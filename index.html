@@ -1281,12 +1281,12 @@ async function editCoin(id){
 }
 async function deleteCoin(id){
   const c=coins.find(x=>x.id===id);if(!c||!confirm("Delete this coin and its photos?"))return;
-  const response = await fetch(`${API}/api/coins/${id}`, {
+  const response = await fetch(`${API}/api/coins?id=${encodeURIComponent(id)}`, {
   method: "DELETE"
 });
 if (!response.ok) throw new Error(await response.text());
  
-  const paths=[c.front_photo_url,c.back_photo_url].filter(Boolean);if(paths.length)await supabase.storage.from(BUCKET).remove(paths);
+  
   toast("Coin deleted");await loadCoins();
 }
 function openDetail(c){
