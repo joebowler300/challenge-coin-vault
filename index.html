@@ -1149,13 +1149,10 @@ $("sportsCoins").textContent=categories["Sports"];
 
 function publicUrl(path){
   if(!path)return "";
-  if(path.startsWith("http"))return path;
-  return supabase.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
+  return path.startsWith("http") ? path : "";
 }
   function thumbnailUrl(path){
-  const url=publicUrl(path);
-  if(!url)return "";
-  return url.replace("/storage/v1/object/public/","/storage/v1/render/image/public/")+"?width=350&quality=65";
+  return publicUrl(path);
 }
 function render(){
   updateDashboard();
