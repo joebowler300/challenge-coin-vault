@@ -1,1359 +1,795 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0b1220">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Challenge Coin Vault</title>
 <style>
-:root{
---bg:#f4f6f8;
---card:#ffffff;
---ink:#111827;
---muted:#667085;
---line:#e4e7ec;
---navy:#0b1220;
---blue:#163a63;
---gold:#d9a441;
---danger:#b42318;
---shadow:0 8px 24px #10182814;
-}
-
-*{box-sizing:border-box}
-
-body{
-margin:0;
-font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-background:var(--bg);
-color:var(--ink);
-}
-
-button,input,select,textarea{
-font:inherit;
-}
-
-button{
-border:0;
-border-radius:10px;
-padding:11px 15px;
-font-weight:700;
-cursor:pointer;
-}
-
-.primary{
-background:var(--blue);
-color:#fff;
-}
-
-.secondary{
-background:#eef2f6;
-color:#182230;
-}
-
-.danger{
-background:#fee4e2;
-color:var(--danger);
-}
-
-/* HEADER */
-
-header{
-background:linear-gradient(135deg,#07101d,#102846 58%,#0b1220);
-color:#fff;
-padding:18px max(18px,calc((100vw - 1200px)/2));
-position:sticky;
-top:0;
-z-index:10;
-box-shadow:0 2px 16px #0004;
-overflow:hidden;
-}
-
-header:after{
-content:"";
-position:absolute;
-inset:0;
-opacity:.08;
-background:repeating-linear-gradient(
-0deg,
-#fff 0 3px,
-transparent 3px 18px
-);
-pointer-events:none;
-}
-
-.top{
-position:relative;
-z-index:1;
-display:flex;
-align-items:center;
-justify-content:space-between;
-gap:14px;
-}
-
-.brand{
-display:flex;
-align-items:center;
-gap:12px;
-}
-
-.logo{
-width:50px;
-height:50px;
-border-radius:14px;
-background:linear-gradient(135deg,var(--gold),#fff0b0);
-display:grid;
-place-items:center;
-color:var(--navy);
-font-size:18px;
-font-weight:900;
-box-shadow:0 5px 16px #0004;
-}
-
-.brand h1{
-font-size:25px;
-margin:0;
-line-height:1.05;
-}
-
-.brand small{
-display:block;
-color:#cbd5e1;
-margin-top:5px;
-font-size:14px;
-}
-
-.head-actions{
-display:flex;
-align-items:center;
-gap:10px;
-}
-
-.head-icon{
-width:44px;
-height:44px;
-border-radius:50%;
-padding:0;
-background:#173452;
-color:#fff;
-font-size:20px;
-}
-
-.cloud{
-font-size:12px;
-color:#d7e0ec;
-white-space:nowrap;
-}
-
-/* MAIN */
-
-main{
-max-width:1200px;
-margin:auto;
-padding:20px 16px 60px;
-}
-
-/* STATISTICS */
-
-.stats{
-display:grid;
-grid-template-columns:repeat(4,1fr);
-gap:12px;
-margin-bottom:18px;
-}
-
-.stat{
-background:linear-gradient(135deg,#10243b,#0d1b2d);
-color:#fff;
-border-radius:15px;
-padding:14px;
-min-height:92px;
-box-shadow:var(--shadow);
-display:flex;
-align-items:center;
-gap:10px;
-}
-
-.stat-icon{
-font-size:28px;
-width:38px;
-text-align:center;
-}
-
-.stat-number{
-font-size:25px;
-font-weight:800;
-line-height:1;
-}
-
-.stat-label{
-font-size:12px;
-font-weight:700;
-margin-top:5px;
-}
-
-.stat-sub{
-font-size:11px;
-color:#b9c6d6;
-margin-top:3px;
-}
-
-/* DASHBOARD PANELS */
-
-.dashboard{
-display:grid;
-grid-template-columns:1.25fr .9fr;
-gap:16px;
-margin-bottom:22px;
-}
-
-.panel{
-background:#fff;
-border:1px solid var(--line);
-border-radius:16px;
-box-shadow:var(--shadow);
-padding:16px;
-}
-
-.panel-title{
-display:flex;
-align-items:center;
-justify-content:space-between;
-gap:10px;
-margin-bottom:13px;
-}
-
-.panel-title h2{
-font-size:18px;
-margin:0;
-}
-
-.panel-title span{
-font-size:12px;
-color:var(--muted);
-}
-
-/* RECENT */
-
-.recent{
-display:flex;
-gap:12px;
-overflow-x:auto;
-padding-bottom:8px;
-}
-
-.recent-card{
-min-width:220px;
-width:220px;
-flex:0 0 220px;
-cursor:pointer;
-}
-
-.recent-img{
-aspect-ratio:1.25;
-background:#eef1f5;
-border-radius:10px;
-overflow:hidden;
-display:grid;
-place-items:center;
-}
-
-.recent-img img{
-width:100%;
-height:100%;
-object-fit:cover;
-}
-
-.recent-name{
-font-weight:700;
-font-size:12px;
-margin-top:7px;
-white-space:nowrap;
-overflow:hidden;
-text-overflow:ellipsis;
-}
-
-.recent-date{
-font-size:11px;
-color:var(--muted);
-margin-top:3px;
-}
-
-/* CATEGORY CHART */
-
-.chart-wrap{
-display:flex;
-align-items:center;
-gap:18px;
-}
-
-.donut{
-width:145px;
-height:145px;
-border-radius:50%;
-position:relative;
-flex:0 0 auto;
-background:conic-gradient(
-#2777d6 0 35%,
-#e1ad32 35% 52%,
-#4aa45f 52% 65%,
-#df4c45 65% 75%,
-#8a97a8 75% 88%,
-#8b6bd6 88% 100%
-);
-}
-
-.donut:after{
-content:"";
-position:absolute;
-inset:35px;
-background:#fff;
-border-radius:50%;
-}
-
-.donut-center{
-position:absolute;
-z-index:1;
-inset:0;
-display:grid;
-place-content:center;
-text-align:center;
-font-weight:800;
-}
-
-.donut-center b{
-font-size:20px;
-}
-
-.donut-center span{
-font-size:11px;
-color:var(--muted);
-}
-
-.legend{
-display:grid;
-gap:7px;
-width:100%;
-}
-
-.legend-row{
-display:flex;
-align-items:center;
-justify-content:space-between;
-font-size:12px;
-}
-
-.legend-label{
-display:flex;
-align-items:center;
-gap:7px;
-}
-
-.dot{
-width:9px;
-height:9px;
-border-radius:50%;
-display:inline-block;
-}
-
-/* COLLECTION */
-
-.collection-head{
-display:flex;
-align-items:center;
-justify-content:space-between;
-gap:12px;
-margin-bottom:12px;
-}
-
-.collection-head h2{
-margin:0;
-font-size:23px;
-}
-
-.collection-actions{
-display:flex;
-align-items:center;
-gap:8px;
-}
-
-.view-toggle{
-display:flex;
-background:#eef2f6;
-border-radius:10px;
-padding:3px;
-}
-
-.view-toggle button{
-padding:8px 10px;
-background:transparent;
-color:#667085;
-}
-
-.view-toggle button.active{
-background:#fff;
-color:#163a63;
-box-shadow:0 1px 4px #0002;
-}
-
-/* SEARCH + FILTERS */
-
-.toolbar{
-display:grid;
-grid-template-columns:1fr repeat(4,minmax(130px,1fr));
-gap:9px;
-margin-bottom:12px;
-}
-
-.searchbox{
-position:relative;
-}
-
-.searchbox span{
-position:absolute;
-left:12px;
-top:10px;
-font-size:17px;
-}
-
-.searchbox input{
-padding-left:36px;
-}
-
-input,select,textarea{
-width:100%;
-border:1px solid var(--line);
-border-radius:10px;
-padding:11px 12px;
-background:#fff;
-color:var(--ink);
-}
-
-/* COIN GRID */
-
-.grid{
-display:grid;
-grid-template-columns:repeat(4,1fr);
-gap:14px;
-}
-
-.coin{
-background:var(--card);
-border:1px solid var(--line);
-border-radius:15px;
-overflow:hidden;
-box-shadow:var(--shadow);
-cursor:pointer;
-transition:transform .15s,box-shadow .15s;
-}
-
-.coin:hover{
-transform:translateY(-2px);
-box-shadow:0 12px 28px #10182820;
-}
-
-.coinimg{
-aspect-ratio:1.2;
-background:#eef1f5;
-display:grid;
-place-items:center;
-overflow:hidden;
-}
-
-.coinimg img{
-width:100%;
-height:100%;
-object-fit:contain;
-}
-
-.noimg{
-color:#98a2b3;
-font-weight:700;
-}
-
-.coinbody{
-padding:12px;
-}
-
-.coinbody h3{
-margin:0 0 4px;
-font-size:15px;
-}
-
-.meta{
-color:var(--muted);
-font-size:12px;
-line-height:1.45;
-min-height:31px;
-}
-
-.tags{
-display:flex;
-gap:5px;
-flex-wrap:wrap;
-margin:9px 0;
-}
-
-.tag{
-font-size:10px;
-background:#eef4fb;
-color:#23476f;
-border-radius:999px;
-padding:5px 7px;
-}
-
-.actions{
-display:flex;
-gap:7px;
-margin-top:10px;
-}
-
-.actions button{
-flex:1;
-padding:8px;
-font-size:12px;
-}
-
-.count{
-color:var(--muted);
-font-size:13px;
-margin:0 0 12px;
-}
-
-.empty{
-text-align:center;
-padding:60px 20px;
-color:var(--muted);
-grid-column:1/-1;
-}
-
-/* MODALS */
-
-.modal{
-position:fixed;
-inset:0;
-background:#0008;
-display:none;
-align-items:flex-end;
-justify-content:center;
-z-index:20;
-}
-
-.modal.open{
-display:flex;
-}
-
-.sheet{
-background:#fff;
-width:min(780px,100%);
-max-height:94vh;
-overflow:auto;
-border-radius:20px 20px 0 0;
-padding:20px;
-}
-
-.sheet h2{
-margin:0 0 16px;
-}
-
-.formgrid{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:12px;
-}
-
-.field{
-margin-bottom:12px;
-}
-
-.field label{
-display:block;
-font-size:13px;
-font-weight:700;
-margin:0 0 6px;
-}
-
-.photos{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:12px;
-margin-bottom:14px;
-}
-
-.photo{
-  border:2px solid #cbd5e1;
-  border-radius:14px;
-  overflow:hidden;
-  background:#f8fafc;
-  aspect-ratio:1/1;
-  position:relative;
-  display:grid;
-  place-items:center;
-  cursor:pointer;
-  transition:transform .15s ease,box-shadow .15s ease;
-}
-
-.photo:hover{
-  transform:scale(1.01);
-  box-shadow:0 4px 16px #0002;
-}
-
-.photo img{
-  width:100%;
-  height:100%;
-  object-fit:contain;
-  background:#f8fafc;
-}
-
-.photo .placeholder{
-color:#98a2b3;
-font-weight:700;
-}
-
-.photo label{
-position:absolute;
-left:8px;
-right:8px;
-bottom:8px;
-background:#0b1220dd;
-color:#fff;
-text-align:center;
-padding:9px;
-border-radius:9px;
-}
-
-.photo input{
-display:none;
-}
-.image-viewer{
-  position:fixed;
-  inset:0;
-  background:#000e;
-  display:none;
-  align-items:center;
-  justify-content:center;
-  z-index:100;
-  padding:20px;
-}
-
-.image-viewer.open{
-  display:flex;
-}
-
-.image-viewer img{
-  max-width:100%;
-  max-height:90vh;
-  object-fit:contain;
-  border-radius:12px;
-}
-
-.image-viewer-close{
-  position:absolute;
-  top:20px;
-  right:20px;
-  width:44px;
-  height:44px;
-  border:0;
-  border-radius:50%;
-  background:#fff;
-  color:#111;
-  font-size:28px;
-  font-weight:700;
-  cursor:pointer;
-}
-.foot{
-display:flex;
-gap:10px;
-justify-content:flex-end;
-margin-top:10px;
-}
-
-.status{
-font-size:13px;
-color:var(--muted);
-min-height:20px;
-}
-
-.toast{
-position:fixed;
-left:50%;
-bottom:22px;
-transform:translateX(-50%);
-background:#0b1220;
-color:#fff;
-padding:12px 16px;
-border-radius:12px;
-display:none;
-z-index:30;
-box-shadow:var(--shadow);
-}
-
-.toast.show{
-display:block;
-}
-
-/* RESPONSIVE */
-
-@media(max-width:950px){
-
-.stats{
-grid-template-columns:repeat(3,1fr);
-}
-
-.dashboard{
-grid-template-columns:1fr;
-}
-
-.grid{
-grid-template-columns:repeat(3,1fr);
-}
-
-.toolbar{
-grid-template-columns:1fr 1fr;
-}
-
-.searchbox{
-grid-column:1/-1;
-}
-
-}
-
-@media(max-width:650px){
-
-header{
-padding:14px;
-}
-
-.brand h1{
-font-size:20px;
-}
-
-.logo{
-width:44px;
-height:44px;
-}
-
-.head-icon{
-display:none;
-}
-
-.stats{
-grid-template-columns:repeat(2,1fr);
-}
-
-.stat:first-child{
-grid-column:1/-1;
-}
-
-.recent{
-grid-template-columns:repeat(2,1fr);
-}
-
-.grid{
-grid-template-columns:repeat(2,1fr);
-gap:10px;
-}
-
-.toolbar{
-grid-template-columns:1fr 1fr;
-}
-
-.collection-head{
-align-items:flex-start;
-}
-
-.collection-actions{
-flex-wrap:wrap;
-justify-content:flex-end;
-}
-
-.formgrid,
-.photos{
-grid-template-columns:1fr;
-}
-
-.cloud{
-display:none;
-}
-
-}
-
-@media(max-width:430px){
-
-.grid{
-grid-template-columns:1fr;
-}
-
-.toolbar{
-grid-template-columns:1fr;
-}
-
-.collection-head{
-display:block;
-}
-
-.collection-actions{
-margin-top:10px;
-justify-content:flex-start;
-}
-
+:root {
+  --bg: #10151d;
+  --panel: #1a222e;
+  --panel2: #222d3b;
+  --text: #f4f6f8;
+  --muted: #9ba8b8;
+  --accent: #d4ad60;
+  --border: #344151;
+  --danger: #e05b62;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+button, input, select, textarea { font: inherit; }
+button { cursor: pointer; }
+header {
+  padding: 22px 18px;
+  background: #0b1017;
+  border-bottom: 1px solid var(--border);
+}
+.header-inner, main { max-width: 1200px; margin: auto; }
+.brand { display: flex; align-items: center; gap: 13px; }
+.brand-mark {
+  width: 48px; height: 48px; border-radius: 50%;
+  display: grid; place-items: center;
+  border: 2px solid var(--accent); color: var(--accent);
+  font-size: 24px; font-weight: 800;
+}
+h1 { font-size: 23px; margin: 0; letter-spacing: .5px; }
+.subtitle { color: var(--muted); font-size: 13px; margin-top: 5px; }
+.header-row {
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 15px; flex-wrap: wrap;
+}
+.status { color: var(--muted); font-size: 12px; margin-top: 12px; }
+.status::before {
+  content: ""; display: inline-block; width: 8px; height: 8px;
+  border-radius: 50%; background: #50c78c; margin-right: 7px;
+}
+.status.error::before { background: var(--danger); }
+main { padding: 20px 16px 50px; }
+.stats {
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px; margin-bottom: 22px;
+}
+.stat, .panel, .category-card {
+  background: var(--panel); border: 1px solid var(--border); border-radius: 13px;
+}
+.stat { padding: 17px; }
+.stat-label { color: var(--muted); font-size: 12px; }
+.stat-number { font-size: 27px; font-weight: 750; margin-top: 8px; }
+.section-title {
+  font-size: 17px; font-weight: 750; margin: 24px 0 13px;
+}
+.categories {
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px; margin-bottom: 23px;
+}
+.category-card {
+  padding: 14px; color: var(--text); text-align: left;
+  transition: border-color .15s, background .15s;
+}
+.category-card.active { border-color: var(--accent); background: #302b21; }
+.category-card .cat-name { font-size: 13px; font-weight: 700; }
+.category-card .cat-count { color: var(--muted); font-size: 12px; margin-top: 7px; }
+.toolbar {
+  display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px;
+}
+.toolbar input, .toolbar select { flex: 1 1 180px; }
+input, select, textarea {
+  min-width: 0; width: 100%; color: var(--text);
+  background: #111923; border: 1px solid var(--border);
+  border-radius: 8px; padding: 11px 12px; outline: none;
+}
+input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+button {
+  border: 1px solid var(--border); border-radius: 8px;
+  padding: 10px 14px; background: var(--panel2); color: var(--text);
+}
+button:hover { filter: brightness(1.12); }
+.btn-primary { background: var(--accent); border-color: var(--accent); color: #17130b; font-weight: 750; }
+.btn-danger { color: #ff9a9e; border-color: #754147; }
+.btn-small { padding: 7px 10px; font-size: 12px; }
+.collection-head {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 10px; flex-wrap: wrap;
+}
+.coin-grid {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+.coin-card {
+  overflow: hidden; background: var(--panel); border: 1px solid var(--border);
+  border-radius: 13px; min-width: 0;
+}
+.coin-photo {
+  height: 190px; background: #0b1017; display: flex;
+  align-items: center; justify-content: center; overflow: hidden;
+  color: var(--muted); font-size: 13px;
+}
+.coin-photo img { width: 100%; height: 100%; object-fit: contain; }
+.coin-info { padding: 14px; }
+.coin-category { color: var(--accent); font-size: 11px; text-transform: uppercase; letter-spacing: .7px; }
+.coin-agency { font-weight: 800; font-size: 16px; margin-top: 7px; overflow-wrap: anywhere; }
+.coin-title { color: var(--muted); font-size: 13px; margin-top: 5px; overflow-wrap: anywhere; }
+.coin-meta { color: var(--muted); font-size: 12px; line-height: 1.6; margin-top: 10px; overflow-wrap: anywhere; }
+.coin-actions { display: flex; gap: 7px; margin-top: 13px; flex-wrap: wrap; }
+.empty, .loading {
+  text-align: center; padding: 45px 15px; color: var(--muted);
+  background: var(--panel); border: 1px dashed var(--border); border-radius: 12px;
+}
+.hidden { display: none !important; }
+.modal {
+  position: fixed; inset: 0; z-index: 10; background: #000b;
+  display: flex; align-items: flex-start; justify-content: center;
+  padding: 18px; overflow-y: auto;
+}
+.modal-content {
+  width: 100%; max-width: 680px; background: var(--panel);
+  border: 1px solid var(--border); border-radius: 14px; padding: 20px;
+  margin: auto 0;
+}
+.modal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 10px; margin-bottom: 18px;
+}
+.modal-header h2 { font-size: 20px; margin: 0; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; }
+.field { min-width: 0; }
+.field.full { grid-column: 1 / -1; }
+.field label { display: block; color: var(--muted); font-size: 12px; margin-bottom: 6px; }
+.field textarea { resize: vertical; min-height: 80px; }
+.photo-preview {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+}
+.photo-box {
+  border: 1px dashed var(--border); border-radius: 9px; padding: 10px;
+  min-width: 0;
+}
+.photo-box img {
+  width: 100%; height: 140px; object-fit: contain;
+  display: block; margin-bottom: 8px; background: #10151d;
+}
+.photo-box label { margin-bottom: 8px; }
+.form-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+.viewer-image { width: 100%; max-height: 65vh; object-fit: contain; background: #0b1017; border-radius: 8px; }
+.viewer-caption { margin: 12px 0; color: var(--muted); }
+@media (max-width: 850px) {
+  .coin-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .categories { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 560px) {
+  main { padding: 15px 11px 35px; }
+  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+  .stat { padding: 13px; }
+  .stat-number { font-size: 24px; }
+  .categories { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .coin-grid { grid-template-columns: 1fr; }
+  .coin-photo { height: 220px; }
+  .form-grid { grid-template-columns: 1fr; }
+  .field.full { grid-column: auto; }
+  h1 { font-size: 20px; }
+  .photo-preview { grid-template-columns: 1fr 1fr; }
 }
 </style>
 </head>
 <body>
 <header>
-<div class="top">
-<div class="brand">
-<div class="logo">CC</div>
-<div>
-<h1>Challenge Coin Vault</h1>
-<small>Your Personal Collection</small>
-</div>
-</div>
-<div class="head-actions">
-
-<div class="cloud" id="cloudStatus">☁️ Cloud Connected</div>
-</div>
-</div>
+  <div class="header-inner">
+    <div class="header-row">
+      <div class="brand">
+        <div class="brand-mark">CV</div>
+        <div>
+          <h1>CHALLENGE COIN VAULT</h1>
+          <div class="subtitle">Your collection. Organized and protected.</div>
+        </div>
+      </div>
+      <button class="btn-primary" id="addCoinBtn">＋ Add Coin</button>
+    </div>
+    <div class="status" id="connectionStatus">Connecting to Cloudflare…</div>
+  </div>
 </header>
 
 <main>
-
-<section class="stats">
-<div class="stat">
-<div class="stat-icon">🪙</div>
-<div>
-<div class="stat-number" id="totalCoins">0</div>
-<div class="stat-label">Total Coins</div>
-<div class="stat-sub">In Your Vault</div>
-</div>
-</div>
-
-<div class="stat">
-<div class="stat-icon">🛡️</div>
-<div>
-<div class="stat-number" id="policeCoins">0</div>
-<div class="stat-label">Police</div>
-<div class="stat-sub">Collection</div>
-</div>
-</div>
-
-<div class="stat">
-<div class="stat-icon">★</div>
-<div>
-<div class="stat-number" id="federalCoins">0</div>
-<div class="stat-label">Federal</div>
-<div class="stat-sub">Collection</div>
-</div>
-</div>
-
-<div class="stat">
-<div class="stat-icon">▰</div>
-<div>
-<div class="stat-number" id="militaryCoins">0</div>
-<div class="stat-label">Military</div>
-<div class="stat-sub">Collection</div>
-</div>
-</div>
-
-<div class="stat">
-<div class="stat-icon">🔥</div>
-<div>
-<div class="stat-number" id="fireCoins">0</div>
-<div class="stat-label">Fire / EMS</div>
-<div class="stat-sub">Collection</div>
-</div>
-</div>
-
-<div class="stat">
-<div class="stat-icon">◉</div>
-<div>
-<div class="stat-number" id="otherCoins">0</div>
-<div class="stat-label">Other</div>
-<div class="stat-sub">Collection</div>
-</div>
-</div>
-  <div class="stat">
-  <div class="stat-icon">🏢</div>
-  <div>
-    <div class="stat-number" id="companyCoins">0</div>
-    <div class="stat-label">Company</div>
-    <div class="stat-sub">Collection</div>
+  <div class="stats">
+    <div class="stat"><div class="stat-label">TOTAL COINS</div><div class="stat-number" id="totalStat">—</div></div>
+    <div class="stat"><div class="stat-label">CATEGORIES</div><div class="stat-number" id="categoryStat">—</div></div>
+    <div class="stat"><div class="stat-label">WITH FRONT PHOTO</div><div class="stat-number" id="photoStat">—</div></div>
+    <div class="stat"><div class="stat-label">FAVORITES</div><div class="stat-number" id="favoriteStat">—</div></div>
   </div>
-</div>
 
-<div class="stat">
-  <div class="stat-icon">⭐</div>
-  <div>
-    <div class="stat-number" id="sheriffCoins">0</div>
-    <div class="stat-label">Sheriff's Department</div>
-    <div class="stat-sub">Collection</div>
+  <div class="section-title">Browse by Category</div>
+  <div class="categories" id="categories"></div>
+
+  <div class="collection-head">
+    <div class="section-title">My Collection</div>
+    <div id="resultCount" class="subtitle"></div>
   </div>
-</div>
-
-<div class="stat">
-  <div class="stat-icon">🏛️</div>
-  <div>
-    <div class="stat-number" id="governmentCoins">0</div>
-    <div class="stat-label">Government</div>
-    <div class="stat-sub">Collection</div>
+  <div class="toolbar">
+    <input id="searchInput" type="search" placeholder="Search agency, name, unit, title…">
+    <select id="sortSelect" aria-label="Sort collection">
+      <option value="agency">Agency A–Z</option>
+      <option value="newest">Newest Added</option>
+      <option value="name">Name A–Z</option>
+      <option value="category">Category A–Z</option>
+    </select>
+    <button id="favoritesBtn">☆ Favorites</button>
+    <button id="clearFilterBtn">Clear Filters</button>
   </div>
-</div>
-<div class="stat">
-  <div class="stat-icon">🏆</div>
-  <div>
-    <div class="stat-number" id="sportsCoins">0</div>
-    <div class="stat-label">Sports</div>
-    <div class="stat-sub">Collection</div>
-  </div>
-</div>
-</div>
-</section>
 
-<section class="dashboard">
-
-
-
-<div class="panel">
-<div class="panel-title">
-<h2>◈ Collection by Category</h2>
-<span id="chartTotal">0 coins</span>
-</div>
-
-<div class="chart-wrap">
-<div class="donut">
-<div class="donut-center">
-<b id="donutNumber">0</b>
-<span>Coins</span>
-</div>
-</div>
-
-<div class="legend" id="legend"></div>
-</div>
-</div>
-
-</section>
-
-<section>
-
-<div class="collection-head">
-<h2>🪙 Your Collection</h2>
-
-<div class="collection-actions">
-<div class="view-toggle">
-<button id="gridView" class="active">▦</button>
-<button id="listView">☷</button>
-</div>
-
-<select id="sort">
-<option value="newest">Newest First</option>
-<option value="oldest">Oldest First</option>
-<option value="az">A–Z</option>
-<option value="za">Z–A</option>
-</select>
-
-<button class="primary" id="addBtn">＋ Add Coin</button>
-</div>
-</div>
-
-<div class="toolbar">
-
-<div class="searchbox">
-<span>⌕</span>
-<input id="search" class="search" placeholder="Search your coins…">
-</div>
-
-<select id="filter">
-<option value="">All categories</option>
-</select>
-
-<select id="agencyFilter">
-<option value="">All agencies</option>
-</select>
-
-<select id="unitFilter">
-<option value="">All units</option>
-</select>
-
-<select id="versionFilter">
-<option value="">All versions</option>
-</select>
-
-</div>
-
-<div class="count" id="count">Loading…</div>
-
-<section id="grid" class="grid"></section>
-
-</section>
-
+  <div id="loading" class="loading">Loading your coin collection…</div>
+  <div id="coinGrid" class="coin-grid"></div>
+  <div id="emptyState" class="empty hidden">No coins match your search or filter.</div>
 </main>
 
-<div class="modal" id="modal"><div class="sheet">
-<h2 id="modalTitle">Add Coin</h2>
-<div class="photos">
-<div class="photo" id="frontBox"><span class="placeholder">Front photo</span><img id="frontPreview" hidden><label>📷 Choose Front<input id="front" type="file" accept="image/*" capture="environment"></label></div>
-<div class="photo" id="backBox"><span class="placeholder">Back photo</span><img id="backPreview" hidden><label>📷 Choose Back<input id="back" type="file" accept="image/*" capture="environment"></label></div>
+<div id="coinModal" class="modal hidden">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="modalTitle">Add Coin</h2>
+      <button type="button" id="closeModalBtn" aria-label="Close">✕</button>
+    </div>
+    <form id="coinForm">
+      <input type="hidden" id="coinId">
+      <div class="form-grid">
+        <div class="field">
+          <label for="category">Category *</label>
+          <select id="category" required>
+            <option value="Police">Police</option>
+            <option value="Federal">Federal</option>
+            <option value="Military">Military</option>
+            <option value="Company">Company</option>
+            <option value="Sheriff's Department">Sheriff's Department</option>
+            <option value="Government">Government</option>
+            <option value="Sports">Sports</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="agency_branch">Agency / Branch *</label>
+          <input id="agency_branch" required>
+        </div>
+        <div class="field">
+          <label for="title_rank">Title / Rank</label>
+          <input id="title_rank">
+        </div>
+        <div class="field">
+          <label for="name">Name</label>
+          <input id="name">
+        </div>
+        <div class="field">
+          <label for="unit">Unit</label>
+          <input id="unit">
+        </div>
+        <div class="field">
+          <label for="version">Version</label>
+          <input id="version">
+        </div>
+        <div class="field full">
+          <label for="notes">Notes</label>
+          <textarea id="notes"></textarea>
+        </div>
+        <div class="field full">
+          <label>Coin Photos</label>
+          <div class="photo-preview">
+            <div class="photo-box">
+              <label for="frontPhoto">Front of Coin</label>
+              <img id="frontPreview" alt="Front photo preview" class="hidden">
+              <input id="frontPhoto" type="file" accept="image/*">
+              <button type="button" class="btn-small" id="removeFrontBtn">Remove Front Photo</button>
+            </div>
+            <div class="photo-box">
+              <label for="backPhoto">Back of Coin</label>
+              <img id="backPreview" alt="Back photo preview" class="hidden">
+              <input id="backPhoto" type="file" accept="image/*">
+              <button type="button" class="btn-small" id="removeBackBtn">Remove Back Photo</button>
+            </div>
+          </div>
+          <div class="subtitle" style="margin-top:8px">Photo uploads require your Cloudflare upload token. It is not saved in this HTML file.</div>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button type="button" id="cancelBtn">Cancel</button>
+        <button type="submit" class="btn-primary" id="saveBtn">Save Coin</button>
+      </div>
+    </form>
+  </div>
 </div>
-<div class="formgrid">
-<div class="field"><label>Category</label><select id="category"><option value="">Select category</option><option>Police Departments</option><option>Federal</option><option>Military</option><option>Fire / EMS</option><option>Company</option><option>Sheriff's Department</option><option>Government</option><option>Sports</option><option>Other</option></select></div>
-<div class="field"><label>Agency / Branch</label><input id="agency_branch" placeholder="Agency or branch"></div>
-<div class="field"><label>Title / Rank</label><input id="title_rank" placeholder="Chief, Colonel, Director…"></div>
-<div class="field"><label>Name</label><input id="name" placeholder="Person or organization"></div>
-<div class="field"><label>Unit</label><input id="unit" placeholder="Unit, division, office…"></div>
-<div class="field"><label>Version</label><input id="version" placeholder="Version or edition"></div>
-</div>
-<div class="field"><label>Notes</label><textarea id="notes" placeholder="Additional information about this coin…"></textarea></div>
-<div class="status" id="formStatus"></div>
-<div class="foot"><button class="secondary" id="cancel">Cancel</button><button class="primary" id="save">Save Coin</button></div>
-</div></div>
-<div class="toast" id="toast"></div>
 
-<div class="modal" id="detailModal">
-<div class="sheet">
-<h2 id="detailTitle">Coin Details</h2>
-<div class="photos">
-<div class="photo"><span class="placeholder">Front photo</span><img id="detailFront" hidden></div>
-<div class="photo"><span class="placeholder">Back photo</span><img id="detailBack" hidden></div>
-</div>
-<div class="field"><label>Category</label><div id="detailCategory"></div></div>
-<div class="field"><label>Agency / Branch</label><div id="detailAgency"></div></div>
-<div class="field"><label>Title / Rank</label><div id="detailTitleRank"></div></div>
-<div class="field"><label>Name</label><div id="detailName"></div></div>
-<div class="field"><label>Unit</label><div id="detailUnit"></div></div>
-<div class="field"><label>Version</label><div id="detailVersion"></div></div>
-<div class="field"><label>Notes</label><div id="detailNotes"></div></div>
-<div class="foot">
-<button class="secondary" id="detailClose">Close</button>
-</div>
+<div id="viewerModal" class="modal hidden">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="viewerTitle">Coin Photos</h2>
+      <button type="button" id="closeViewerBtn">✕</button>
+    </div>
+    <img id="viewerImage" class="viewer-image" alt="Challenge coin photo">
+    <div id="viewerCaption" class="viewer-caption"></div>
+    <div class="form-actions">
+      <button id="showFrontBtn" type="button">Front</button>
+      <button id="showBackBtn" type="button">Back</button>
+    </div>
+  </div>
 </div>
 
-<div class="image-viewer" id="imageViewer">
-  <button class="image-viewer-close" id="imageViewerClose">×</button>
-  <img id="viewerImage" alt="Coin photo">
-</div>
+<script>
+"use strict";
 
-<script type="module">
+/* Cloudflare Worker API. Do not put your upload secret in this file. */
 const API = "https://challenge-coin-vault-api.joeyg300.workers.dev";
-let coins = [], editing = null;
 
-const $=id=>document.getElementById(id);
-const esc=s=>(s??"").toString().replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
-function toast(msg){$("toast").textContent=msg;$("toast").classList.add("show");setTimeout(()=>$("toast").classList.remove("show"),2500)}
-function setStatus(msg=""){ $("formStatus").textContent=msg }
+const CATEGORIES = [
+  "Police", "Federal", "Military", "Company",
+  "Sheriff's Department", "Government", "Sports", "Other"
+];
+
+let coins = [];
+let activeCategory = "All";
+let favoritesOnly = false;
+let editingCoin = null;
+let frontPhotoToRemove = false;
+let backPhotoToRemove = false;
+let frontPreviewUrl = "";
+let backPreviewUrl = "";
+let uploadToken = "";
+let viewerCoin = null;
+
+const $ = id => document.getElementById(id);
+
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, ch => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  })[ch]);
+}
+
+function makeId() {
+  if (window.crypto && typeof window.crypto.randomUUID === "function") {
+    return window.crypto.randomUUID();
+  }
+  return "coin-" + Date.now() + "-" + Math.random().toString(16).slice(2);
+}
+
+function setStatus(message, error = false) {
+  $("connectionStatus").textContent = message;
+  $("connectionStatus").classList.toggle("error", error);
+}
+
+function photoUrl(coin, side) {
+  const urlField = side === "front" ? coin.front_photo_url : coin.back_photo_url;
+  const pathField = side === "front" ? coin.front_photo_path : coin.back_photo_path;
+  const value = urlField || pathField;
+  if (!value) return "";
+  if (/^https?:\/\//i.test(String(value))) return String(value);
+  return API + "/" + String(value).replace(/^\/+/, "");
+}
+
+async function apiRequest(path, options = {}) {
+  const response = await fetch(API + path, options);
+  const body = await response.text();
+  if (!response.ok) {
+    throw new Error(body || "Request failed (" + response.status + ")");
+  }
+  if (!body) return null;
+  try { return JSON.parse(body); }
+  catch { return body; }
+}
 
 async function loadCoins() {
-  $("cloudStatus").textContent = "☁️ Loading...";
+  $("loading").classList.remove("hidden");
+  $("coinGrid").innerHTML = "";
   try {
-    const response = await fetch(`${API}/api/coins`);
-    if (!response.ok) throw new Error(await response.text());
-    const result = await response.json();
-    coins = Array.isArray(result) ? result : result.coins || [];
-    $("cloudStatus").textContent = `☁️ Cloud connected — ${coins.length} coins`;
+    const data = await apiRequest("/api/coins");
+    if (!Array.isArray(data)) throw new Error("The API did not return a coin list.");
+    coins = data.map(coin => ({
+      ...coin,
+      favorite: coin.favorite === true || coin.favorite === 1 || coin.favorite === "1"
+    }));
+    setStatus("Connected to Cloudflare · " + coins.length + " coins loaded");
     render();
   } catch (error) {
-    $("cloudStatus").textContent = "☁️ Connection error: " + error.message;
-    console.error(error);
+    setStatus("Could not load collection: " + error.message, true);
+    $("loading").textContent = "Unable to load your collection. Check your connection and refresh the page.";
+    return;
   }
+  $("loading").classList.add("hidden");
 }
 
+function renderStats() {
+  $("totalStat").textContent = coins.length;
+  const usedCategories = new Set(coins.map(c => c.category).filter(Boolean));
+  $("categoryStat").textContent = usedCategories.size;
+  $("photoStat").textContent = coins.filter(c => c.front_photo_url || c.front_photo_path).length;
+  $("favoriteStat").textContent = coins.filter(c => c.favorite).length;
+}
 
-function updateDashboard(){
-  const total=coins.length;
-
-const categories={
-  "Police Departments":0,
-  "Federal":0,
-  "Military":0,
-  "Fire / EMS":0,
-  "Company":0,
-  "Sheriff's Department":0,
-  "Government":0,
-"Sports":0,
-"Other":0
-};
-
-coins.forEach(c=>{
-  const category=c.category||"Other";
-
-  if(categories.hasOwnProperty(category)){
-    categories[category]++;
-  }else{
-    categories["Other"]++;
-  }
-});
-
-  $("totalCoins").textContent=total;
-  $("policeCoins").textContent=categories["Police Departments"];
-  $("federalCoins").textContent=categories["Federal"];
-  $("militaryCoins").textContent=categories["Military"];
-  $("fireCoins").textContent=categories["Fire / EMS"];
-  $("otherCoins").textContent=categories["Other"];
-  $("companyCoins").textContent=categories["Company"];
-$("sheriffCoins").textContent=categories["Sheriff's Department"];
-$("governmentCoins").textContent=categories["Government"];
-$("sportsCoins").textContent=categories["Sports"];
-  $("donutNumber").textContent=total;
-  $("chartTotal").textContent=`${total} ${total===1?"coin":"coins"}`;
-
-  const colors=[
-  "#2777d6",
-  "#e1ad32",
-  "#4aa45f",
-  "#df4c45",
-  "#8b6bd6",
-  "#2aa7a1",
-  "#d97932",
-"#5b8def",
-"#777777"
-];
-
-  const labels=[
-  "Police Departments",
-  "Federal",
-  "Military",
-  "Fire / EMS",
-  "Company",
-  "Sheriff's Department",
-  "Government",
-"Sports",
-"Other"
-];
-
-  let start=0;
-  const stops=[];
-
-  labels.forEach((label,i)=>{
-    const percent=total ? (categories[label]/total)*100 : 0;
-    const end=start+percent;
-    stops.push(`${colors[i]} ${start}% ${end}%`);
-    start=end;
+function renderCategories() {
+  const counts = {};
+  CATEGORIES.forEach(cat => counts[cat] = 0);
+  coins.forEach(coin => {
+    const cat = coin.category || "Other";
+    counts[cat] = (counts[cat] || 0) + 1;
   });
 
-  $("donutNumber").textContent=total;
+  const entries = [{ name: "All", count: coins.length }, ...CATEGORIES.map(name => ({
+    name, count: counts[name] || 0
+  }))];
 
-  document.querySelector(".donut").style.background=
-    total ? `conic-gradient(${stops.join(",")})` : "#d9dee7";
-
-  $("legend").innerHTML=labels.map((label,i)=>`
-    <div class="legend-row">
-      <div class="legend-label">
-        <span class="dot" style="background:${colors[i]}"></span>
-        ${label}
-      </div>
-      <b>${categories[label]}</b>
-    </div>
+  $("categories").innerHTML = entries.map(item => `
+    <button type="button" class="category-card ${activeCategory === item.name ? "active" : ""}"
+      data-category="${escapeHTML(item.name)}">
+      <div class="cat-name">${escapeHTML(item.name === "All" ? "All Coins" : item.name)}</div>
+      <div class="cat-count">${item.count} ${item.count === 1 ? "coin" : "coins"}</div>
+    </button>
   `).join("");
 
-
+  $("categories").querySelectorAll("[data-category]").forEach(button => {
+    button.addEventListener("click", () => {
+      activeCategory = button.dataset.category;
+      render();
+    });
+  });
 }
 
-function publicUrl(path){
-  if(!path)return "";
-  return path.startsWith("http") ? path : "";
-}
-  function thumbnailUrl(path){
-  return publicUrl(path);
-}
-function render(){
-  updateDashboard();
-  const q=$("search").value.toLowerCase(), f=$("filter").value;
-  const cats=["Police Departments","Federal","Military","Fire / EMS","Company","Sheriff's Department","Government","Sports","Other"];
-  $("filter").innerHTML='<option value="">All categories</option>'+cats.map(c=>`<option value="${esc(c)}" ${c===f?"selected":""}>${esc(c)}</option>`).join("");
-  $("filter").value=f;
-  const list=coins.filter(c=>{const text=[c.name,c.agency_branch,c.title_rank,c.unit,c.category,c.version].join(" ").toLowerCase();return (!f|| (c.category||"Other")===f)&&(!q||text.includes(q));});
-  $("count").textContent=`${list.length} coin${list.length===1?"":"s"} in your vault`;
- const s=$("sort").value;
+function filteredCoins() {
+  const term = $("searchInput").value.trim().toLowerCase();
+  let list = coins.filter(coin => {
+    const categoryMatch = activeCategory === "All" || (coin.category || "Other") === activeCategory;
+    const favoriteMatch = !favoritesOnly || coin.favorite;
+    const searchable = [
+      coin.category, coin.agency_branch, coin.title_rank, coin.name,
+      coin.unit, coin.version, coin.notes, coin.coin_number
+    ].join(" ").toLowerCase();
+    return categoryMatch && favoriteMatch && (!term || searchable.includes(term));
+  });
 
-if(s==="az"){
-  list.sort((a,b)=>(a.name||a.agency_branch||"").localeCompare(b.name||b.agency_branch||""));
-}
-
-if(s==="za"){
-  list.sort((a,b)=>(b.name||b.agency_branch||"").localeCompare(a.name||a.agency_branch||""));
-} $("grid").innerHTML=list.length?list.map(c=>`
-  <article class="coin" data-open="${c.id}">
-   <div class="coinimg">${c.front_photo_url?`<img loading="lazy" decoding="async" src="${esc(publicUrl(c.front_photo_url))}" alt="Front of coin">`:'<span class="noimg">No front photo</span>'}</div>
-   <div class="coinbody">
-    <h3>${esc(c.name||c.agency_branch||"Untitled Coin")}</h3>
-    <div class="meta">${esc(c.agency_branch||"")}${c.title_rank?" • "+esc(c.title_rank):""}${c.unit?"<br>"+esc(c.unit):""}</div>
-    <div class="tags">${c.category?`<span class="tag">${esc(c.category)}</span>`:""}${c.version?`<span class="tag">${esc(c.version)}</span>`:""}</div>
-    <div class="actions"><button class="secondary" data-edit="${c.id}">Edit</button><button class="danger" data-delete="${c.id}">Delete</button></div>
-   </div>
-  </article>`).join(""):'<div class="empty">No coins yet.<br>Tap <b>＋ Add Coin</b> to start your collection.</div>';
-  document.querySelectorAll("[data-edit]").forEach(b=>b.onclick=e=>{e.stopPropagation();editCoin(b.dataset.edit);});
-  document.querySelectorAll("[data-delete]").forEach(b=>b.onclick=e=>{e.stopPropagation();deleteCoin(b.dataset.delete);});
-  document.querySelectorAll(".coin").forEach(card=>{
-  card.onclick=()=>{
-    const coin=coins.find(c=>c.id===card.dataset.open);
-    if(coin)openDetail(coin);
-  };
-});
-}
-function showCategory(category){
-  $("filter").value=category;
-  render();
-  $("filter").value=category;
+  const sort = $("sortSelect").value;
+  list.sort((a, b) => {
+    if (sort === "newest") return String(b.created_at || "").localeCompare(String(a.created_at || ""));
+    if (sort === "name") return String(a.name || "").localeCompare(String(b.name || ""));
+    if (sort === "category") return String(a.category || "").localeCompare(String(b.category || ""));
+    return String(a.agency_branch || "").localeCompare(String(b.agency_branch || ""));
+  });
+  return list;
 }
 
-$("totalCoins").onclick=()=>showCategory("");
-$("policeCoins").onclick=()=>showCategory("Police Departments");
-$("federalCoins").onclick=()=>showCategory("Federal");
-$("militaryCoins").onclick=()=>showCategory("Military");
-$("fireCoins").onclick=()=>showCategory("Fire / EMS");
-$("otherCoins").onclick=()=>showCategory("Other");
-$("companyCoins").onclick=()=>showCategory("Company");
-$("sheriffCoins").onclick=()=>showCategory("Sheriff's Department");
-$("governmentCoins").onclick=()=>showCategory("Government");
-  $("sportsCoins").onclick=()=>showCategory("Sports");
-  function resetForm(){
- ["category","agency_branch","title_rank","name","unit","version","notes"].forEach(x=>$(x).value="");
- $("front").value="";$("back").value="";$("frontPreview").hidden=true;$("backPreview").hidden=true;
- $("frontBox").querySelector(".placeholder").style.display="";$("backBox").querySelector(".placeholder").style.display="";
- editing=null;$("modalTitle").textContent="Add Coin";setStatus("");
+function renderCoinCard(coin) {
+  const front = photoUrl(coin, "front");
+  const back = photoUrl(coin, "back");
+  const image = front || back;
+  const title = coin.agency_branch || "Untitled Coin";
+  const favoriteLabel = coin.favorite ? "★ Favorite" : "☆ Favorite";
+
+  return `
+    <article class="coin-card">
+      <div class="coin-photo">
+        ${image
+          ? `<img src="${escapeHTML(image)}" alt="${escapeHTML(title)}" loading="lazy"
+               onerror="this.style.display='none';this.parentElement.innerHTML='Photo unavailable';">`
+          : `<span>No photo added</span>`}
+      </div>
+      <div class="coin-info">
+        <div class="coin-category">${escapeHTML(coin.category || "Other")}</div>
+        <div class="coin-agency">${escapeHTML(title)}</div>
+        <div class="coin-title">${escapeHTML(coin.title_rank || "")}</div>
+        <div class="coin-meta">
+          ${coin.name ? `<div><strong>Name:</strong> ${escapeHTML(coin.name)}</div>` : ""}
+          ${coin.unit ? `<div><strong>Unit:</strong> ${escapeHTML(coin.unit)}</div>` : ""}
+          ${coin.version ? `<div><strong>Version:</strong> ${escapeHTML(coin.version)}</div>` : ""}
+          ${coin.coin_number ? `<div><strong>Coin #:</strong> ${escapeHTML(coin.coin_number)}</div>` : ""}
+        </div>
+        <div class="coin-actions">
+          <button type="button" class="btn-small" data-action="view" data-id="${escapeHTML(coin.id)}">View Photos</button>
+          <button type="button" class="btn-small" data-action="favorite" data-id="${escapeHTML(coin.id)}">${favoriteLabel}</button>
+          <button type="button" class="btn-small" data-action="edit" data-id="${escapeHTML(coin.id)}">Edit</button>
+          <button type="button" class="btn-small btn-danger" data-action="delete" data-id="${escapeHTML(coin.id)}">Delete</button>
+        </div>
+      </div>
+    </article>`;
 }
-function openAdd(){resetForm();$("modal").classList.add("open")}
-function closeModal(){$("modal").classList.remove("open")}
-function preview(input,img,box){const file=input.files[0];if(!file)return;const r=new FileReader();r.onload=()=>{img.src=r.result;img.hidden=false;box.querySelector(".placeholder").style.display="none"};r.readAsDataURL(file)}
-$("front").onchange=()=>preview($("front"),$("frontPreview"),$("frontBox"));
-$("back").onchange=()=>preview($("back"),$("backPreview"),$("backBox"));
-$("addBtn").onclick=openAdd;$("cancel").onclick=closeModal;$("search").oninput=render;$("filter").onchange=render;$("sort").onchange=render;
-  
 
+function render() {
+  renderStats();
+  renderCategories();
+  const list = filteredCoins();
+  $("resultCount").textContent = `${list.length} ${list.length === 1 ? "coin" : "coins"}`;
+  $("coinGrid").innerHTML = list.map(renderCoinCard).join("");
+  $("emptyState").classList.toggle("hidden", list.length !== 0);
+  $("loading").classList.add("hidden");
 
+  $("coinGrid").querySelectorAll("[data-action]").forEach(button => {
+    button.addEventListener("click", () => {
+      const coin = coins.find(item => String(item.id) === button.dataset.id);
+      if (!coin) return;
+      const action = button.dataset.action;
+      if (action === "view") openViewer(coin);
+      if (action === "edit") openEditor(coin);
+      if (action === "favorite") toggleFavorite(coin);
+      if (action === "delete") deleteCoin(coin);
+    });
+  });
+}
 
+function clearPreviewUrls() {
+  if (frontPreviewUrl) URL.revokeObjectURL(frontPreviewUrl);
+  if (backPreviewUrl) URL.revokeObjectURL(backPreviewUrl);
+  frontPreviewUrl = "";
+  backPreviewUrl = "";
+}
 
-const API = "https://challenge-coin-vault-api.joeyg300.workers.dev";
+function setPreview(side, url) {
+  const img = $(side === "front" ? "frontPreview" : "backPreview");
+  if (side === "front") {
+    if (frontPreviewUrl) URL.revokeObjectURL(frontPreviewUrl);
+    frontPreviewUrl = url || "";
+  } else {
+    if (backPreviewUrl) URL.revokeObjectURL(backPreviewUrl);
+    backPreviewUrl = url || "";
+  }
+  img.src = url || "";
+  img.classList.toggle("hidden", !url);
+}
+
+function openEditor(coin = null) {
+  editingCoin = coin;
+  frontPhotoToRemove = false;
+  backPhotoToRemove = false;
+  clearPreviewUrls();
+  $("coinForm").reset();
+  $("coinId").value = coin ? coin.id : "";
+  $("modalTitle").textContent = coin ? "Edit Coin" : "Add Coin";
+  $("saveBtn").textContent = coin ? "Save Changes" : "Save Coin";
+
+  const fields = ["category", "agency_branch", "title_rank", "name", "unit", "version", "notes"];
+  fields.forEach(field => {
+    $(field).value = coin && coin[field] != null ? coin[field] : (field === "category" ? "Police" : "");
+  });
+
+  $("frontPhoto").value = "";
+  $("backPhoto").value = "";
+  setPreview("front", coin ? photoUrl(coin, "front") : "");
+  setPreview("back", coin ? photoUrl(coin, "back") : "");
+  $("coinModal").classList.remove("hidden");
+}
+
+function closeEditor() {
+  $("coinModal").classList.add("hidden");
+  clearPreviewUrls();
+  editingCoin = null;
+}
+
+function readFileAsDataURL(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(new Error("Could not read the selected photo."));
+    reader.readAsDataURL(file);
+  });
+}
+
+async function askForUploadToken() {
+  if (uploadToken) return uploadToken;
+  const token = prompt("Enter your Cloudflare UPLOAD_TOKEN to upload a photo. It will only be held temporarily in this page and will not be saved to GitHub.");
+  if (!token) throw new Error("Photo upload cancelled. Your coin details have not been saved.");
+  uploadToken = token.trim();
+  return uploadToken;
+}
 
 async function uploadPhoto(file, coinId, side) {
-  const ext = (file.name.split(".").pop() || "jpg")
-    .toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg";
-  const path = `${coinId}/${side}-${Date.now()}.${ext}`;
-
-  const response = await fetch(`${API}/${path}`, {
+  if (!file) return null;
+  const token = await askForUploadToken();
+  const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_").slice(-80) || "photo.jpg";
+  const key = `coin-photos/${coinId}/${side}-${Date.now()}-${safeName}`;
+  const response = await fetch(API + "/" + key, {
     method: "PUT",
     headers: {
-      "Content-Type": file.type || "image/jpeg",
-      "Authorization": `Bearer ${UPLOAD_TOKEN}`
+      "Authorization": "Bearer " + token,
+      "Content-Type": file.type || "image/jpeg"
     },
     body: file
   });
 
-  if (!response.ok) throw new Error(await response.text());
-  return `${API}/${path}`;
+  if (!response.ok) {
+    if (response.status === 401) uploadToken = "";
+    throw new Error(response.status === 401
+      ? "Photo upload was unauthorized. Check your UPLOAD_TOKEN and try again."
+      : "Photo upload failed (" + response.status + ").");
+  }
+
+  return { path: key, url: API + "/" + key };
 }
 
-async function removePhoto(path) {
-  // Existing R2 photos are left in place for safety.
+function payloadForSave(existing, id) {
+  /* Send every field the Worker expects, preserving existing values on edits. */
+  return {
+    id,
+    user_id: existing?.user_id ?? null,
+    coin_number: existing?.coin_number ?? null,
+    category: $("category").value,
+    agency_branch: $("agency_branch").value.trim(),
+    title_rank: $("title_rank").value.trim() || null,
+    name: $("name").value.trim() || null,
+    unit: $("unit").value.trim() || null,
+    version: $("version").value.trim() || null,
+    front_photo_path: existing?.front_photo_path ?? null,
+    back_photo_path: existing?.back_photo_path ?? null,
+    notes: $("notes").value.trim() || null,
+    created_at: existing?.created_at ?? new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    front_photo_url: existing?.front_photo_url ?? null,
+    back_photo_url: existing?.back_photo_url ?? null,
+    favorite: existing?.favorite ? 1 : 0
+  };
 }
 
-$("save").onclick=async()=>{
-  const btn=$("save");btn.disabled=true;btn.innerHTML='<span class="spinner"></span>Saving…';
-  try{
-    const existing=editing?coins.find(c=>c.id===editing):null;
-    const id=editing||crypto.randomUUID();
-    const payload={
-      id,category:$("category").value.trim(),agency_branch:$("agency_branch").value.trim(),
-      title_rank:$("title_rank").value.trim(),name:$("name").value.trim(),unit:$("unit").value.trim(),
-      version:$("version").value.trim(),notes:$("notes").value.trim(),updated_at:new Date().toISOString()
-    };
-    if(!editing)payload.created_at=new Date().toISOString();
-    const frontFile=$("front").files[0],backFile=$("back").files[0];
-    if(frontFile){setStatus("Uploading front photo…");payload.front_photo_url=await uploadPhoto(frontFile,id,"front");}
-    if(backFile){setStatus("Uploading back photo…");payload.back_photo_url=await uploadPhoto(backFile,id,"back");}
-    const response = await fetch(`${API}/api/coins`, {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify(payload)
+async function saveCoin(event) {
+  event.preventDefault();
+  const saveButton = $("saveBtn");
+  saveButton.disabled = true;
+  saveButton.textContent = "Saving…";
+
+  try {
+    const id = editingCoin ? editingCoin.id : makeId();
+    const existing = editingCoin ? { ...editingCoin } : {};
+    const payload = payloadForSave(existing, id);
+
+    if (frontPhotoToRemove) {
+      payload.front_photo_path = null;
+      payload.front_photo_url = null;
+    }
+    if (backPhotoToRemove) {
+      payload.back_photo_path = null;
+      payload.back_photo_url = null;
+    }
+
+    const frontFile = $("frontPhoto").files[0];
+    const backFile = $("backPhoto").files[0];
+
+    if (frontFile) {
+      const uploaded = await uploadPhoto(frontFile, id, "front");
+      payload.front_photo_path = uploaded.path;
+      payload.front_photo_url = uploaded.url;
+    }
+    if (backFile) {
+      const uploaded = await uploadPhoto(backFile, id, "back");
+      payload.back_photo_path = uploaded.path;
+      payload.back_photo_url = uploaded.url;
+    }
+
+    await apiRequest("/api/coins", {
+      method: editingCoin ? "PUT" : "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+
+    closeEditor();
+    await loadCoins();
+  } catch (error) {
+    alert("Could not save coin:\n" + error.message);
+  } finally {
+    saveButton.disabled = false;
+    saveButton.textContent = editingCoin ? "Save Changes" : "Save Coin";
+  }
+}
+
+async function toggleFavorite(coin) {
+  const updated = {
+    ...coin,
+    favorite: !coin.favorite,
+    updated_at: new Date().toISOString()
+  };
+  try {
+    await apiRequest("/api/coins", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        id: updated.id,
+        user_id: updated.user_id ?? null,
+        coin_number: updated.coin_number ?? null,
+        category: updated.category ?? "Other",
+        agency_branch: updated.agency_branch ?? "",
+        title_rank: updated.title_rank ?? null,
+        name: updated.name ?? null,
+        unit: updated.unit ?? null,
+        version: updated.version ?? null,
+        front_photo_path: updated.front_photo_path ?? null,
+        back_photo_path: updated.back_photo_path ?? null,
+        notes: updated.notes ?? null,
+        created_at: updated.created_at ?? new Date().toISOString(),
+        updated_at: updated.updated_at,
+        front_photo_url: updated.front_photo_url ?? null,
+        back_photo_url: updated.back_photo_url ?? null,
+        favorite: updated.favorite ? 1 : 0
+      })
+    });
+    await loadCoins();
+  } catch (error) {
+    alert("Could not update favorite:\n" + error.message);
+  }
+}
+
+async function deleteCoin(coin) {
+  const label = coin.agency_branch || "this coin";
+  if (!confirm(`Delete "${label}" from your collection? This cannot be undone.`)) return;
+  try {
+    await apiRequest("/api/coins?id=" + encodeURIComponent(coin.id), { method: "DELETE" });
+    await loadCoins();
+  } catch (error) {
+    alert("Could not delete coin:\n" + error.message);
+  }
+}
+
+function openViewer(coin) {
+  viewerCoin = coin;
+  $("viewerTitle").textContent = coin.agency_branch || "Coin Photos";
+  $("viewerModal").classList.remove("hidden");
+  showViewerSide("front");
+}
+
+function showViewerSide(side) {
+  if (!viewerCoin) return;
+  const url = photoUrl(viewerCoin, side);
+  $("viewerImage").src = url || "";
+  $("viewerImage").style.display = url ? "block" : "none";
+  $("viewerCaption").textContent = url
+    ? (side === "front" ? "Front of coin" : "Back of coin")
+    : `No ${side} photo saved for this coin.`;
+}
+
+function closeViewer() {
+  $("viewerModal").classList.add("hidden");
+  $("viewerImage").src = "";
+  viewerCoin = null;
+}
+
+$("addCoinBtn").addEventListener("click", () => openEditor());
+$("closeModalBtn").addEventListener("click", closeEditor);
+$("cancelBtn").addEventListener("click", closeEditor);
+$("coinForm").addEventListener("submit", saveCoin);
+$("searchInput").addEventListener("input", render);
+$("sortSelect").addEventListener("change", render);
+$("favoritesBtn").addEventListener("click", () => {
+  favoritesOnly = !favoritesOnly;
+  $("favoritesBtn").textContent = favoritesOnly ? "★ Favorites Only" : "☆ Favorites";
+  render();
 });
-if (!response.ok) throw new Error(await response.text());
-    toast(editing?"Coin updated":"Coin saved to the cloud");
-    closeModal();await loadCoins();
-  }catch(e){setStatus("Could not save: "+e.message);toast("Could not save coin")}
-  finally{btn.disabled=false;btn.textContent="Save Coin"}
-};
-
-async function editCoin(id){
-  const c=coins.find(x=>x.id===id);if(!c)return;editing=id;$("modalTitle").textContent="Edit Coin";
-  ["category","agency_branch","title_rank","name","unit","version","notes"].forEach(x=>$(x).value=c[x]||"");
-  if(c.front_photo_url){$("frontPreview").src=publicUrl(c.front_photo_url);$("frontPreview").hidden=false;$("frontBox").querySelector(".placeholder").style.display="none"}
-  if(c.back_photo_url){$("backPreview").src=publicUrl(c.back_photo_url);$("backPreview").hidden=false;$("backBox").querySelector(".placeholder").style.display="none"}
-  $("modal").classList.add("open");
-}
-async function deleteCoin(id){
-  const c=coins.find(x=>x.id===id);if(!c||!confirm("Delete this coin and its photos?"))return;
-  const response = await fetch(`${API}/api/coins?id=${encodeURIComponent(id)}`, {
-  method: "DELETE"
+$("clearFilterBtn").addEventListener("click", () => {
+  activeCategory = "All";
+  favoritesOnly = false;
+  $("searchInput").value = "";
+  $("sortSelect").value = "agency";
+  $("favoritesBtn").textContent = "☆ Favorites";
+  render();
 });
-if (!response.ok) throw new Error(await response.text());
- 
-  
-  toast("Coin deleted");await loadCoins();
-}
-function openDetail(c){
-  $("detailTitle").textContent=c.name||c.agency_branch||"Coin Details";
-  $("detailCategory").textContent=c.category||"";
-  $("detailAgency").textContent=c.agency_branch||"";
-  $("detailTitleRank").textContent=c.title_rank||"";
-  $("detailName").textContent=c.name||"";
-  $("detailUnit").textContent=c.unit||"";
-  $("detailVersion").textContent=c.version||"";
-  $("detailNotes").textContent=c.notes||"";
+$("frontPhoto").addEventListener("change", async event => {
+  const file = event.target.files[0];
+  if (file) setPreview("front", await readFileAsDataURL(file));
+});
+$("backPhoto").addEventListener("change", async event => {
+  const file = event.target.files[0];
+  if (file) setPreview("back", await readFileAsDataURL(file));
+});
+$("removeFrontBtn").addEventListener("click", () => {
+  $("frontPhoto").value = "";
+  frontPhotoToRemove = true;
+  setPreview("front", "");
+});
+$("removeBackBtn").addEventListener("click", () => {
+  $("backPhoto").value = "";
+  backPhotoToRemove = true;
+  setPreview("back", "");
+});
+$("closeViewerBtn").addEventListener("click", closeViewer);
+$("showFrontBtn").addEventListener("click", () => showViewerSide("front"));
+$("showBackBtn").addEventListener("click", () => showViewerSide("back"));
 
-  const front=$("detailFront");
-  const back=$("detailBack");
+$("coinModal").addEventListener("click", event => {
+  if (event.target === $("coinModal")) closeEditor();
+});
+$("viewerModal").addEventListener("click", event => {
+  if (event.target === $("viewerModal")) closeViewer();
+});
 
-  if(c.front_photo_url){
-  front.src=publicUrl(c.front_photo_url);
-  front.hidden=false;
-  front.previousElementSibling.style.display="none";
-}else{
-  front.hidden=true;
-  front.previousElementSibling.style.display="";
-}
-
-  if(c.back_photo_url){
-  back.src=publicUrl(c.back_photo_url);
-  back.hidden=false;
-  back.previousElementSibling.style.display="none";
-}else{
-  back.hidden=true;
-  back.previousElementSibling.style.display="";
-}
-
-  $("detailModal").classList.add("open");
-}
-  $("detailFront").onclick=()=>{
-  if(!$("detailFront").hidden){
-    $("viewerImage").src=$("detailFront").src;
-    $("imageViewer").classList.add("open");
-  }
-};
-
-$("detailBack").onclick=()=>{
-  if(!$("detailBack").hidden){
-    $("viewerImage").src=$("detailBack").src;
-    $("imageViewer").classList.add("open");
-  }
-};
-
-$("imageViewerClose").onclick=()=>{
-  $("imageViewer").classList.remove("open");
-};
-
-$("imageViewer").onclick=e=>{
-  if(e.target.id==="imageViewer"){
-    $("imageViewer").classList.remove("open");
-  }
-};
-
-$("detailClose").onclick=()=>{
-  $("detailModal").classList.remove("open");
-};
-
-$("detailModal").onclick=e=>{
-  if(e.target.id==="detailModal"){
-    $("detailModal").classList.remove("open");
-  }
-};loadCoins();
+loadCoins();
 </script>
-</body></html>
+</body>
+</html>
