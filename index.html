@@ -405,7 +405,6 @@ function renderStats() {
   $("totalStat").textContent = coins.length;
   const usedCategories = new Set(coins.map(c => c.category).filter(Boolean));
   $("categoryStat").textContent = usedCategories.size;
-  $("photoStat").textContent = coins.filter(c => c.front_photo_url || c.front_photo_path).length;
   $("favoriteStat").textContent = coins.filter(c => c.favorite).length;
 }
 
